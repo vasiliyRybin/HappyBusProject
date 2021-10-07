@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -59,7 +60,13 @@ namespace HappyBusProject.Controllers
             }
             catch (Exception e)
             {
-                return new string[] { "Exception occured!", $"{e.Message}" };
+                using (var fs = new FileStream(logPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+                using (BufferedStream bs = new(fs))
+                using (TextWriter sr = new StreamWriter(bs, Encoding.Default))
+                {
+                    sr.WriteLine(e.Message);
+                }
+                    return new string[] { "Exception occured! ", $"{e.Message}" };
             }
         }
 
