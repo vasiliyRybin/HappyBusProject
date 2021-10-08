@@ -87,9 +87,7 @@ namespace HappyBusProject.Controllers
             if (!int.TryParse(carAge, out int carAgeInt) || carAgeInt < 0 || carAgeInt > 15) return "Invalid car age or car age is too big";
             if (driverName.Length > 50 || !new Regex(@"\w{1,15}\s\w{1,15}\s\w{1,15}").IsMatch(driverName)) return "Invalid name";
             if (!int.TryParse(driverAge, out int driverAgeInt) || driverAgeInt < 21 || driverAgeInt > 65) return "Invalid age.";
-
             if (DateTime.TryParse(examPass, out DateTime result)) examPass = result.ToString();
-            else examPass = "NULL";
 
             try
             {
