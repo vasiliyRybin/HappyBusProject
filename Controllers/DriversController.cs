@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HappyBusProject.ModelsToReturn;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,7 +16,6 @@ namespace HappyBusProject.Controllers
     public class DriversController : ControllerBase
     {
         private const string connectionString = "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;";
-        private readonly string logPath = Environment.CurrentDirectory.ToString() + "\\Log";
         private readonly ILogger<DriversController> _logger;
 
         public DriversController(ILogger<DriversController> logger)
@@ -23,57 +24,51 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpGet]
-        public string[] Get(string ID, bool byID = false)
+        public DriverInfo[] Get()
         {
             try
             {
-                if(!string.IsNullOrWhiteSpace(ID))
+                using var db = new MyShuttleBusAppDBContext();
+                var drivers = db.Drivers.Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+
+                DriverInfo[] result = new DriverInfo[drivers.Count];
+
+                for (int i = 0; i < result.Length; i++)
                 {
-                    const string pattern = @"[\d\w]{8}-[\d\w]{4}-[\d\w]{4}-[\d\w]{4}-[\d\w]{12}";
-                    var correctId = new Regex(pattern).Match(ID).Success;
-                    if (!correctId) return new string[] { "Incorrect input ID" };
+                    result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
-                var result = new List<string>();
-                var sb = new StringBuilder();
 
-                using var connection = new SqlConnection(connectionString);
-                SqlCommand command = new(byID ? DBQueriesClass.GetDriverByID(ID) : DBQueriesClass.GetDrivers(), connection)
-                {
-                    CommandTimeout = 30
-                };
-
-                connection.Open();
-                var SQLreader = command.ExecuteReader();
-
-                while (SQLreader.Read())
-                {
-                    for (int i = 0; i < SQLreader.FieldCount; i++)
-                    {
-                        sb.Append(SQLreader.GetValue(i).ToString() + "\t" ?? string.Empty + "\t");
-                    }
-                    result.Add(sb.ToString());
-                    sb.Clear();
-                }
-                SQLreader.Close();
-
-                return result.ToArray();
+                return result;
             }
             catch (Exception e)
             {
-                using (var fs = new FileStream(logPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
-                using (BufferedStream bs = new(fs))
-                using (TextWriter sr = new StreamWriter(bs, Encoding.Default))
-                {
-                    sr.WriteLine(e.Message);
-                }
-                    return new string[] { "Exception occured! ", $"{e.Message}" };
+                AppTools.ErrorWriter(e.Message);
+                return Array.Empty<DriverInfo>();
             }
         }
 
-        [HttpGet("{firstParam}")]
-        public string[] Get(string firstParam)
+        [HttpGet("{name}")]
+        public DriverInfo[] Get(string name)
         {
-            return Get(firstParam, true);
+            try
+            {
+                using var db = new MyShuttleBusAppDBContext();
+                var drivers = db.Drivers.Where(d => d.Name.Contains(name)).Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+
+                DriverInfo[] result = new DriverInfo[drivers.Count];
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                AppTools.ErrorWriter(e.Message);
+                return Array.Empty<DriverInfo>();
+            }
         }
 
         [HttpPost("{brand}/{seatsNum}/{registrationNumPlate}/{carAge}/{driverName}/{driverAge}/{examPass}")]
@@ -102,9 +97,10 @@ namespace HappyBusProject.Controllers
                 SQLquery.Close();
                 return "Driver succesfully added";
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return ex.Message;
+                AppTools.ErrorWriter(e.Message);
+                return e.Message;
             }
         }
 
