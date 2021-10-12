@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+
+#pragma warning disable CA1806
 
 namespace HappyBusProject.Controllers
 {
@@ -24,7 +23,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpGet]
-        public Tuple<DriverInfo[], string> Get()
+        public DriverInfo[] Get()
         {
             try
             {
@@ -40,17 +39,17 @@ namespace HappyBusProject.Controllers
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return new (result, string.Empty);
+                return result;
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + "GET Method");
-                return new(Array.Empty<DriverInfo>(), DateTime.Now + " " + e.Message);
+                AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
+                return new DriverInfo[] { new DriverInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
 
         [HttpGet("{name}")]
-        public Tuple<DriverInfo[], string> Get(string name)
+        public DriverInfo[] Get(string name)
         {
             try
             {
@@ -64,12 +63,12 @@ namespace HappyBusProject.Controllers
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return new(result, string.Empty);
+                return result;
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + "GET Method");
-                return new(Array.Empty<DriverInfo>(), DateTime.Now + " " + e.Message);
+                AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
+                return new DriverInfo[] { new DriverInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
 
@@ -82,22 +81,40 @@ namespace HappyBusProject.Controllers
             if (!int.TryParse(seatsNum, out int numSeats) || numSeats <= 8 || numSeats > 50) return "Invalid number of seats";
             if (registrationNumPlate.Length > 9 || !new Regex(@"\d{4}\s\w{2}.\d{1}").IsMatch(registrationNumPlate)) return "Invalid registration plate number";
             if (!int.TryParse(carAge, out int carAgeInt) || carAgeInt < 0 || carAgeInt > 15) return "Invalid car age or car age is too big";
-            //if (driverName.Length > 50 || !new Regex(@"\w{1,15}\s\w{1,15}\s\w{1,15}").IsMatch(driverName)) return "Invalid name";
+            if (driverName.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(driverName)) return "Invalid name";
             if (!int.TryParse(driverAge, out int driverAgeInt) || driverAgeInt < 21 || driverAgeInt > 65) return "Invalid age.";
-            if (DateTime.TryParse(examPass, out DateTime result)) examPass = result.ToString();
+            DateTime.TryParse(examPass, out DateTime resultExamPass);
 
             try
             {
-                using var connection = new SqlConnection(connectionString);
-                SqlCommand command = new(DBQueriesClass.CreateNewDriver(brand, seatsNum, registrationNumPlate, carAge, driverName, driverAge, examPass), connection)
+                using var dbContext = new MyShuttleBusAppDBContext();
+                var carGuid = Guid.NewGuid();
+
+                Car car = new()
                 {
-                    CommandTimeout = 30
+                    Id = carGuid,
+                    Brand = brand,
+                    SeatsNum = numSeats,
+                    RegistrationNumPlate = registrationNumPlate,
+                    Age = carAgeInt
                 };
 
-                connection.Open();
-                var SQLquery = command.ExecuteReader();
-                SQLquery.Close();
-                return "Driver succesfully added";
+                Driver driver = new()
+                {
+                    Name = driverName,
+                    Age = driverAgeInt,
+                    Id = Guid.NewGuid(),
+                    CarId = carGuid,
+                    Rating = 5.0,
+                    MedicalExamPassDate = resultExamPass
+                };
+
+                dbContext.Drivers.Add(driver);
+                dbContext.Cars.Add(car);
+                int successUpdate = dbContext.SaveChanges();
+                if (successUpdate > 0) return "Driver succesfully added";
+                else return "No changes been made";
+
             }
             catch (Exception e)
             {
@@ -107,7 +124,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]
-        public string TestPut( string driverName, string newCarBrand)
+        public string TestPut(string driverName, string newCarBrand)
         {
             try
             {

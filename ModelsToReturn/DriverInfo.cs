@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace HappyBusProject.ModelsToReturn
+﻿namespace HappyBusProject.ModelsToReturn
 {
     public class DriverInfo
     {
@@ -11,5 +6,6 @@ namespace HappyBusProject.ModelsToReturn
         public int Age { get; set; }
         public double Rating { get; set; }
         public string CarBrand { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
     }
 }

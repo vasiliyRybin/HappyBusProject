@@ -1,9 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Data;
-using System.Text.RegularExpressions;
-
-namespace HappyBusProject
+﻿namespace HappyBusProject
 {
     public static class DBQueriesClass
     {
