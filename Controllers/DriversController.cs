@@ -143,7 +143,7 @@ namespace HappyBusProject.Controllers
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + "PUT method");
+                AppTools.ErrorWriterTpFile(e.Message + " " + "PUT method");
                 return e.Message;
             }
         }
@@ -170,7 +170,7 @@ namespace HappyBusProject.Controllers
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + "DELETE method");
+                AppTools.ErrorWriterTpFile(e.Message + " " + "DELETE method");
                 return e.Message;
             }
         }
