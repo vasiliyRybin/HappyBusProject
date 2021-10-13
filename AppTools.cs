@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace HappyBusProject
 {
@@ -21,6 +23,16 @@ namespace HappyBusProject
             {
                 throw new IOException(e.Message);
             }
+        }
+
+        public static string ValuesValidation(string name, string phoneNumber, string email)
+        {
+            if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email)) return "Name, phone and email fields empty";
+            if (name.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(name)) return "Invalid name";
+            if (!string.IsNullOrWhiteSpace(phoneNumber)) if (phoneNumber.Length > 13 || phoneNumber[1..].Any(c => !char.IsDigit(c))) return "Invalid phone number";
+            if (!string.IsNullOrWhiteSpace(email)) if (email.Length > 30 || !new Regex(pattern: @"^([0-9a-zA-Z_-]{1,20}@[a-zA-Z]{1,10}.[a-zA-Z]{1,3})").IsMatch(email)) return "Invalid E-Mail address type";
+
+            return "ok";
         }
     }
 }

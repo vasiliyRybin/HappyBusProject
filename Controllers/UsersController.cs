@@ -66,17 +66,15 @@ namespace HappyBusProject.Controllers
             }
         }
 
-        [HttpPost("{name}/{email}/{phoneNumber}")]
-        public string Post(string name, string email, string phoneNumber)
+        [HttpPost("{name}/{phoneNumber}")]
+        public string Post(string name, string phoneNumber, string email)
         {
-            if (name.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(name)) return "Invalid name";
-            if (phoneNumber.Length > 12 || phoneNumber.Any(c => !char.IsDigit(c))) return "Invalid phone number";
-            if (email.Length > 30 || !new Regex(pattern: @"^([0-9a-zA-Z_-]{1,20}@[a-zA-Z]{1,10}.[a-zA-Z]{1,3})").IsMatch(email)) return "Invalid E-Mail address type";
+            string check = AppTools.ValuesValidation(name, phoneNumber, email);
+            if (check != "ok") return check;
 
             try
             {
                 using var dbContext = new MyShuttleBusAppDBContext();
-
                 User user = new()
                 {
                     Id = Guid.NewGuid(),
@@ -90,7 +88,7 @@ namespace HappyBusProject.Controllers
                 dbContext.Users.Add(user);
                 int successUpdate = dbContext.SaveChanges();
                 if (successUpdate > 0) return "User succesfully added";
-                else return "No changes been made";
+                return "No changes been made";
 
             }
             catch (Exception e)
@@ -100,9 +98,34 @@ namespace HappyBusProject.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{name}")]
+        public string Put(string name, string phoneNumber, string email)
         {
+            if (string.IsNullOrWhiteSpace(phoneNumber)) phoneNumber = " ";
+            if (string.IsNullOrWhiteSpace(email)) email = " ";
+            string check = AppTools.ValuesValidation(name, phoneNumber, email);
+            if (check != "ok") return check;
+
+            try
+            {
+                using var db = new MyShuttleBusAppDBContext();
+                {
+                    var user = db.Users.FirstOrDefault(c => c.FullName.Contains(name));
+                    if (user != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(phoneNumber)) user.PhoneNumber = phoneNumber;
+                        if (!string.IsNullOrWhiteSpace(email)) user.Email = email;
+                        db.SaveChanges();
+                        return "Info successfully updated";
+                    }
+                    return "No changes been made";
+                }
+            }
+            catch (Exception e)
+            {
+                AppTools.ErrorWriterTpFile(e.Message + " " + "PUT method");
+                return e.Message;
+            }
         }
 
         [HttpDelete("{name}")]
