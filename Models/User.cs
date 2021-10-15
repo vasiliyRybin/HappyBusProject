@@ -19,6 +19,7 @@ namespace HappyBusProject
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public bool IsInBlacklist { get; set; }
+        public DateTime DateTimeRegistration { get; set; }
 
         public virtual UsersRatingHistory UsersRatingHistory { get; set; }
         public virtual ICollection<DriversRatingHistory> DriversRatingHistories { get; set; }

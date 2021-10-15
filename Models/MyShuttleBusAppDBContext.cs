@@ -27,7 +27,7 @@ namespace HappyBusProject
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-TUKM5MT\\SQLEXPRESS;Database=MyShuttleBusAppDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=COVID-20_PC\\SQLEXPRESS;Database=MyShuttleBusAppNewDB;Trusted_Connection=True;");
             }
         }
 
@@ -157,7 +157,7 @@ namespace HappyBusProject
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.Email).HasMaxLength(50);
+                entity.Property(e => e.Email).HasMaxLength(150);
 
                 entity.Property(e => e.FullName)
                     .IsRequired()
