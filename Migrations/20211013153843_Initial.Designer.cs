@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
-    [DbContext(typeof(MyShuttleBusAppDBContext))]
+    [DbContext(typeof(MyShuttleBusAppNewDBContext))]
     [Migration("20211013153843_Initial")]
     partial class Initial
     {

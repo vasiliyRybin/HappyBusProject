@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HappyBusProject.Migrations
 {
     [DbContext(typeof(MyShuttleBusAppNewDBContext))]
-    [Migration("20211013154334_Email_150")]
-    partial class Email_150
+    [Migration("20211016111908_Users_NewColumn_RegistrationDateTime")]
+    partial class Users_NewColumn_RegistrationDateTime
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -205,6 +205,9 @@ namespace HappyBusProject.Migrations
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("RegistrationDateTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

@@ -29,7 +29,7 @@ namespace HappyBusProject.Controllers
             {
                 //var test1 = 0;
                 //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 var drivers = db.Drivers.Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
@@ -53,7 +53,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 var drivers = db.Drivers.Where(d => d.Name.Contains(name)).Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
@@ -87,7 +87,7 @@ namespace HappyBusProject.Controllers
 
             try
             {
-                using var dbContext = new MyShuttleBusAppDBContext();
+                using var dbContext = new MyShuttleBusAppNewDBContext();
                 var carGuid = Guid.NewGuid();
 
                 Car car = new()
@@ -128,7 +128,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 {
                     var driverCarID = db.Drivers.FirstOrDefault(c => c.Name.Contains(driverName)).CarId;
                     var car = db.Cars.FirstOrDefault(c => c.Id == driverCarID);
@@ -153,7 +153,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 {
                     var driver = db.Drivers.FirstOrDefault(c => c.Name.Contains(driverName));
                     var carToRemove = db.Cars.FirstOrDefault(c => c.Id == driver.CarId);

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
-    [DbContext(typeof(MyShuttleBusAppDBContext))]
+    [DbContext(typeof(MyShuttleBusAppNewDBContext))]
     partial class MyShuttleBusAppDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -203,6 +203,9 @@ namespace HappyBusProject.Migrations
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("RegistrationDateTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

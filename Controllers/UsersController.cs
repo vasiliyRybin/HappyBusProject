@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace HappyBusProject.Controllers
 {
@@ -13,7 +12,6 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        // GET: api/<ValuesController>
         [HttpGet]
         public UsersInfo[] Get()
         {
@@ -21,7 +19,7 @@ namespace HappyBusProject.Controllers
             {
                 //var test1 = 0;
                 //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 var users = db.Users.ToList();
 
                 UsersInfo[] result = new UsersInfo[users.Count];
@@ -47,7 +45,7 @@ namespace HappyBusProject.Controllers
             {
                 //var test1 = 0;
                 //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 var users = db.Users.Where(u => u.FullName.Contains(name)).ToList();
 
                 UsersInfo[] result = new UsersInfo[users.Count];
@@ -69,12 +67,14 @@ namespace HappyBusProject.Controllers
         [HttpPost("{name}/{phoneNumber}")]
         public string Post(string name, string phoneNumber, string email)
         {
-            string check = AppTools.ValuesValidation(name, phoneNumber, email);
+            string check = AppTools.ValuesValidation(name, ref phoneNumber, ref email);
+
             if (check != "ok") return check;
 
             try
             {
-                using var dbContext = new MyShuttleBusAppDBContext();
+                using var dbContext = new MyShuttleBusAppNewDBContext();
+
                 User user = new()
                 {
                     Id = Guid.NewGuid(),
@@ -82,7 +82,8 @@ namespace HappyBusProject.Controllers
                     Rating = 5.0,
                     PhoneNumber = phoneNumber,
                     Email = email.ToLower(),
-                    IsInBlacklist = false
+                    IsInBlacklist = false,
+                    RegistrationDateTime = DateTime.Now
                 };
 
                 dbContext.Users.Add(user);
@@ -101,14 +102,12 @@ namespace HappyBusProject.Controllers
         [HttpPut("{name}")]
         public string Put(string name, string phoneNumber, string email)
         {
-            if (string.IsNullOrWhiteSpace(phoneNumber)) phoneNumber = " ";
-            if (string.IsNullOrWhiteSpace(email)) email = " ";
-            string check = AppTools.ValuesValidation(name, phoneNumber, email);
+            string check = AppTools.ValuesValidation(name, ref phoneNumber, ref email);
             if (check != "ok") return check;
 
             try
             {
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 {
                     var user = db.Users.FirstOrDefault(c => c.FullName.Contains(name));
                     if (user != null)
@@ -133,7 +132,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppDBContext();
+                using var db = new MyShuttleBusAppNewDBContext();
                 {
                     var user = db.Users.FirstOrDefault(c => c.FullName.Contains(name));
 

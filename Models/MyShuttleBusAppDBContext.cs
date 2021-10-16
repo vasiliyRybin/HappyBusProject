@@ -4,13 +4,13 @@
 
 namespace HappyBusProject
 {
-    public partial class MyShuttleBusAppDBContext : DbContext
+    public partial class MyShuttleBusAppNewDBContext : DbContext
     {
-        public MyShuttleBusAppDBContext()
+        public MyShuttleBusAppNewDBContext()
         {
         }
 
-        public MyShuttleBusAppDBContext(DbContextOptions<MyShuttleBusAppDBContext> options)
+        public MyShuttleBusAppNewDBContext(DbContextOptions<MyShuttleBusAppNewDBContext> options)
             : base(options)
         {
         }
