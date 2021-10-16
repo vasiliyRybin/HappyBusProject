@@ -69,7 +69,6 @@ namespace HappyBusProject.Controllers
 
             try
             {
-
                 User user = new()
                 {
                     Id = Guid.NewGuid(),

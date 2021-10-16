@@ -18,6 +18,7 @@ namespace HappyBusProject
         public int SeatsNum { get; set; }
         public string RegistrationNumPlate { get; set; }
         public int Age { get; set; }
+        public bool IsBusyNow { get; set; }
 
         public virtual ICollection<Driver> Drivers { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

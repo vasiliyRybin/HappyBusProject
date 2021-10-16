@@ -4,14 +4,16 @@ using HappyBusProject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
     [DbContext(typeof(MyShuttleBusAppNewDBContext))]
-    partial class MyShuttleBusAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211016204720_TryRestoreRouteStop2")]
+    partial class TryRestoreRouteStop2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,9 +155,6 @@ namespace HappyBusProject.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StartPointID");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
                     b.HasKey("CarId", "CustomerId");
 
                     b.HasIndex("CustomerId");
@@ -182,9 +181,12 @@ namespace HappyBusProject.Migrations
                     b.Property<int>("RouteLengthKM")
                         .HasColumnType("int");
 
+                    b.Property<string>("Test")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PointId");
 
-                    b.ToTable("RouteStops");
+                    b.ToTable("RouteStop");
                 });
 
             modelBuilder.Entity("HappyBusProject.User", b =>

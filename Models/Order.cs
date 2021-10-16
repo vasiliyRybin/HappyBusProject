@@ -13,6 +13,7 @@ namespace HappyBusProject
         public string OrderType { get; set; }
         public int StartPointId { get; set; }
         public int EndPointId { get; set; }
+        public double TotalPrice { get; set; }
 
         public virtual Car Car { get; set; }
         public virtual User Customer { get; set; }

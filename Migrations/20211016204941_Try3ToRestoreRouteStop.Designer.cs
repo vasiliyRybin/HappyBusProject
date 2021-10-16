@@ -4,14 +4,16 @@ using HappyBusProject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
     [DbContext(typeof(MyShuttleBusAppNewDBContext))]
-    partial class MyShuttleBusAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211016204941_Try3ToRestoreRouteStop")]
+    partial class Try3ToRestoreRouteStop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,38 +155,11 @@ namespace HappyBusProject.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StartPointID");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
                     b.HasKey("CarId", "CustomerId");
 
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("HappyBusProject.RouteStop", b =>
-                {
-                    b.Property<int>("PointId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("PointID")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("RouteDirection")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RouteLengthKM")
-                        .HasColumnType("int");
-
-                    b.HasKey("PointId");
-
-                    b.ToTable("RouteStops");
                 });
 
             modelBuilder.Entity("HappyBusProject.User", b =>
