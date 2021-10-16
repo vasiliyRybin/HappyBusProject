@@ -25,7 +25,7 @@ namespace HappyBusProject
             }
         }
 
-        public static string ValuesValidation(string name, ref string phoneNumber, ref string email)
+        public static string UsersValuesValidation(string name, ref string phoneNumber, ref string email)
         {
             if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email)) return "Name, phone and email fields empty";
             if (string.IsNullOrWhiteSpace(phoneNumber)) phoneNumber = " ";

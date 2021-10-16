@@ -14,12 +14,13 @@ namespace HappyBusProject.Controllers
     [Route("AppAPI/Drivers")]
     public class DriversController : ControllerBase
     {
-        private const string connectionString = "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;";
+        private readonly MyShuttleBusAppNewDBContext _context;
         private readonly ILogger<DriversController> _logger;
 
-        public DriversController(ILogger<DriversController> logger)
+        public DriversController(ILogger<DriversController> logger, MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
         {
             _logger = logger;
+            _context = myShuttleBusAppNewDBContext;
         }
 
         [HttpGet]
@@ -27,10 +28,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                //var test1 = 0;
-                //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppNewDBContext();
-                var drivers = db.Drivers.Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+                var drivers = _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
 
@@ -53,8 +51,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppNewDBContext();
-                var drivers = db.Drivers.Where(d => d.Name.Contains(name)).Join(db.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+                var drivers = _context.Drivers.Where(d => d.Name.Contains(name)).Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
 
@@ -87,7 +84,6 @@ namespace HappyBusProject.Controllers
 
             try
             {
-                using var dbContext = new MyShuttleBusAppNewDBContext();
                 var carGuid = Guid.NewGuid();
 
                 Car car = new()
@@ -109,9 +105,9 @@ namespace HappyBusProject.Controllers
                     MedicalExamPassDate = resultExamPass
                 };
 
-                dbContext.Drivers.Add(driver);
-                dbContext.Cars.Add(car);
-                int successUpdate = dbContext.SaveChanges();
+                _context.Drivers.Add(driver);
+                _context.Cars.Add(car);
+                int successUpdate = _context.SaveChanges();
                 if (successUpdate > 0) return "Driver succesfully added";
                 else return "No changes been made";
 
@@ -128,18 +124,15 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppNewDBContext();
+                var driverCarID = _context.Drivers.FirstOrDefault(c => c.Name.Contains(driverName)).CarId;
+                var car = _context.Cars.FirstOrDefault(c => c.Id == driverCarID);
+                if (car != null)
                 {
-                    var driverCarID = db.Drivers.FirstOrDefault(c => c.Name.Contains(driverName)).CarId;
-                    var car = db.Cars.FirstOrDefault(c => c.Id == driverCarID);
-                    if (car != null)
-                    {
-                        car.Brand = newCarBrand;
-                        db.SaveChanges();
-                        return "Info successfully updated";
-                    }
-                    return "No changes been made";
+                    car.Brand = newCarBrand;
+                    _context.SaveChanges();
+                    return "Info successfully updated";
                 }
+                return "No changes been made";
             }
             catch (Exception e)
             {
@@ -153,20 +146,18 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppNewDBContext();
-                {
-                    var driver = db.Drivers.FirstOrDefault(c => c.Name.Contains(driverName));
-                    var carToRemove = db.Cars.FirstOrDefault(c => c.Id == driver.CarId);
+                var driver = _context.Drivers.FirstOrDefault(c => c.Name.Contains(driverName));
+                var carToRemove = _context.Cars.FirstOrDefault(c => c.Id == driver.CarId);
 
-                    if (driver != null && carToRemove != null)
-                    {
-                        db.Remove(driver);
-                        db.Remove(carToRemove);
-                        db.SaveChanges();
-                        return "Driver successfully deleted";
-                    }
-                    return "No changes been made";
+                if (driver != null && carToRemove != null)
+                {
+                    _context.Remove(driver);
+                    _context.Remove(carToRemove);
+                    _context.SaveChanges();
+                    return "Driver successfully deleted";
                 }
+                return "No changes been made";
+
             }
             catch (Exception e)
             {

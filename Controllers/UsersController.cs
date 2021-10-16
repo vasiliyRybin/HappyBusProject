@@ -1,9 +1,7 @@
 ﻿using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 
 namespace HappyBusProject.Controllers
@@ -12,16 +10,18 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly MyShuttleBusAppNewDBContext _context;
+        public UsersController(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        {
+            _context = myShuttleBusAppNewDBContext;
+        }
+
         [HttpGet]
         public UsersInfo[] Get()
         {
             try
             {
-                //var test1 = 0;
-                //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppNewDBContext();
-                var users = db.Users.ToList();
-
+                var users = _context.Users.ToList();
                 UsersInfo[] result = new UsersInfo[users.Count];
 
                 for (int i = 0; i < result.Length; i++)
@@ -43,11 +43,7 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                //var test1 = 0;
-                //var test2 = 10 / test1;
-                using var db = new MyShuttleBusAppNewDBContext();
-                var users = db.Users.Where(u => u.FullName.Contains(name)).ToList();
-
+                var users = _context.Users.Where(u => u.FullName.Contains(name)).ToList();
                 UsersInfo[] result = new UsersInfo[users.Count];
 
                 for (int i = 0; i < result.Length; i++)
@@ -67,13 +63,12 @@ namespace HappyBusProject.Controllers
         [HttpPost("{name}/{phoneNumber}")]
         public string Post(string name, string phoneNumber, string email)
         {
-            string check = AppTools.ValuesValidation(name, ref phoneNumber, ref email);
+            string check = AppTools.UsersValuesValidation(name, ref phoneNumber, ref email);
 
             if (check != "ok") return check;
 
             try
             {
-                using var dbContext = new MyShuttleBusAppNewDBContext();
 
                 User user = new()
                 {
@@ -86,8 +81,8 @@ namespace HappyBusProject.Controllers
                     RegistrationDateTime = DateTime.Now
                 };
 
-                dbContext.Users.Add(user);
-                int successUpdate = dbContext.SaveChanges();
+                _context.Users.Add(user);
+                int successUpdate = _context.SaveChanges();
                 if (successUpdate > 0) return "User succesfully added";
                 return "No changes been made";
 
@@ -102,23 +97,21 @@ namespace HappyBusProject.Controllers
         [HttpPut("{name}")]
         public string Put(string name, string phoneNumber, string email)
         {
-            string check = AppTools.ValuesValidation(name, ref phoneNumber, ref email);
+            string check = AppTools.UsersValuesValidation(name, ref phoneNumber, ref email);
             if (check != "ok") return check;
 
             try
             {
-                using var db = new MyShuttleBusAppNewDBContext();
+                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(name));
+                if (user != null)
                 {
-                    var user = db.Users.FirstOrDefault(c => c.FullName.Contains(name));
-                    if (user != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(phoneNumber)) user.PhoneNumber = phoneNumber;
-                        if (!string.IsNullOrWhiteSpace(email)) user.Email = email;
-                        db.SaveChanges();
-                        return "Info successfully updated";
-                    }
-                    return "No changes been made";
+                    if (!string.IsNullOrWhiteSpace(phoneNumber)) user.PhoneNumber = phoneNumber;
+                    if (!string.IsNullOrWhiteSpace(email)) user.Email = email;
+                    _context.SaveChanges();
+                    return "Info successfully updated";
                 }
+                return "No changes been made";
+
             }
             catch (Exception e)
             {
@@ -132,18 +125,16 @@ namespace HappyBusProject.Controllers
         {
             try
             {
-                using var db = new MyShuttleBusAppNewDBContext();
-                {
-                    var user = db.Users.FirstOrDefault(c => c.FullName.Contains(name));
+                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(name));
 
-                    if (user != null)
-                    {
-                        db.Remove(user);
-                        db.SaveChanges();
-                        return "User successfully deleted";
-                    }
-                    return "No changes been made";
+                if (user != null)
+                {
+                    _context.Remove(user);
+                    _context.SaveChanges();
+                    return "User successfully deleted";
                 }
+                return "No changes been made";
+
             }
             catch (Exception e)
             {

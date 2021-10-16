@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 #nullable disable
 
@@ -10,10 +11,7 @@ namespace HappyBusProject
         {
         }
 
-        public MyShuttleBusAppNewDBContext(DbContextOptions<MyShuttleBusAppNewDBContext> options)
-            : base(options)
-        {
-        }
+        public MyShuttleBusAppNewDBContext(DbContextOptions<MyShuttleBusAppNewDBContext> options) : base(options) { }
 
         public virtual DbSet<Car> Cars { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
@@ -23,17 +21,19 @@ namespace HappyBusProject
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersRatingHistory> UsersRatingHistories { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=COVID-20_PC\\SQLEXPRESS;Database=MyShuttleBusAppNewDB;Trusted_Connection=True;");
-            }
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer(Startup.GetConnectionString());               //TODO: ConnectionString
+        //    }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             modelBuilder.Entity<Car>(entity =>
             {
