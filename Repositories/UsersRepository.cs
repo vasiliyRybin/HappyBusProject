@@ -83,12 +83,13 @@ namespace HappyBusProject.Repositories
                 {
                     result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
                 }
-
+                Dispose();
                 return result;
             }
             catch (Exception e)
             {
                 AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
+                Dispose();
                 return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
@@ -104,12 +105,13 @@ namespace HappyBusProject.Repositories
                 {
                     result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
                 }
-
+                Dispose();
                 return result;
             }
             catch (Exception e)
             {
                 AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
+                Dispose();
                 return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
@@ -132,14 +134,18 @@ namespace HappyBusProject.Repositories
                     if (!string.IsNullOrWhiteSpace(phoneNumber)) user.PhoneNumber = phoneNumber;
                     if (!string.IsNullOrWhiteSpace(email)) user.Email = email;
                     Save();
+                    Dispose();
                     return "Info successfully updated";
                 }
+
+                Dispose();
                 return "No changes been made";
 
             }
             catch (Exception e)
             {
                 AppTools.ErrorWriterTpFile(e.Message + " " + "PUT method");
+                Dispose();
                 return e.Message;
             }
         }
