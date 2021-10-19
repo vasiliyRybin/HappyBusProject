@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HappyBusProject.Repositories
+﻿namespace HappyBusProject.Repositories
 {
     public class DriversRepository
     {
-        
+
     }
 }

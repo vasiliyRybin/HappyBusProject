@@ -1,4 +1,4 @@
-using HappyBusProject.Repositories;
+using HappyBusProject.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +21,8 @@ namespace HappyBusProject
         {
             services.AddControllers();
             services.AddSwaggerGen();
-            services.AddTransient<UsersRepository>();
             services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
+            services.AddEntities(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,6 +1,5 @@
 ﻿using HappyBusProject.ModelsToReturn;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace HappyBusProject.Repositories
@@ -34,7 +33,7 @@ namespace HappyBusProject.Repositories
                     RegistrationDateTime = DateTime.Now
                 };
 
-                _context.Users.Add(user);    
+                _context.Users.Add(user);
                 int successUpdate = _context.SaveChanges();
                 if (successUpdate > 0) return "User succesfully added";
                 Dispose();
