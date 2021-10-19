@@ -10,9 +10,9 @@ namespace HappyBusProject.Repositories
         private readonly MyShuttleBusAppNewDBContext _context;
         private bool disposedValue = false;
 
-        public UsersRepository()
+        public UsersRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
         {
-            _context = new MyShuttleBusAppNewDBContext();
+            _context = myShuttleBusAppNewDBContext;
         }
 
         public string Create(string name, string phoneNumber, string email)

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HappyBusProject.ModelsToReturn;
+using HappyBusProject.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 #nullable disable
@@ -25,7 +27,7 @@ namespace HappyBusProject
         //{
         //    if (!optionsBuilder.IsConfigured)
         //    {
-        //        optionsBuilder.UseSqlServer(Startup.GetConnectionString());               //TODO: ConnectionString
+        //        optionsBuilder.UseSqlServer(Startup.GetConnectionString());
         //    }
         //}
 
