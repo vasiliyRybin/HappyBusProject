@@ -72,7 +72,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public UsersInfo[] GetAllUsers()
+        public UsersInfo[] GetAll()
         {
             try
             {
@@ -94,7 +94,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public UsersInfo[] GetUserByName(string value)
+        public UsersInfo[] GetByName(string value)
         {
             try
             {

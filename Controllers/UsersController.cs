@@ -18,13 +18,13 @@ namespace HappyBusProject.Controllers
         [HttpGet]
         public UsersInfo[] Get()
         {
-            return _db.GetAllUsers();
+            return _db.GetAll();
         }
 
         [HttpGet("{name}")]
         public UsersInfo[] Get(string name)
         {
-            return _db.GetUserByName(name);
+            return _db.GetByName(name);
         }
 
         [HttpPost("{name}/{phoneNumber}")]

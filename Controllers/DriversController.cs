@@ -20,13 +20,13 @@ namespace HappyBusProject.Controllers
         [HttpGet]
         public DriverInfo[] Get()
         {
-            return _db.GetAllDrivers();
+            return _db.GetAll();
         }
 
         [HttpGet("{name}")]
         public DriverInfo[] Get(string name)
         {
-            return _db.GetDriverByName(name);
+            return _db.GetByName(name);
         }
 
         [HttpPost("{brand}/{seatsNum}/{registrationNumPlate}/{carAge}/{driverName}/{driverAge}/{examPass}")]

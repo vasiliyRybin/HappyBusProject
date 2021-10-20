@@ -92,7 +92,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public DriverInfo[] GetAllDrivers()
+        public DriverInfo[] GetAll()
         {
             try
             {
@@ -116,7 +116,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public DriverInfo[] GetDriverByName(string name)
+        public DriverInfo[] GetByName(string name)
         {
             try
             {

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 
 namespace HappyBusProject.Repositories
 {
-    interface IUsersRepository<T> : IDisposable
+    interface IUsersRepository<T> : IDisposable, IPerson<T>
         where T : class
     {
-        T GetAllUsers();
-        T GetUserByName(string value);
         string Create(string name, string phoneNumber, string email);
         string Update(string name, string phoneNumber, string email);
         string Delete(string name);
