@@ -22,7 +22,7 @@ namespace HappyBusProject
             services.AddControllers();
             services.AddSwaggerGen();
             services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
-            services.AddEntities(Configuration);
+            services.AddTransientScopedSingletonEntities();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

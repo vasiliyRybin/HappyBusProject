@@ -7,16 +7,15 @@ namespace HappyBusProject.Repositories
     public class UsersRepository : IUsersRepository<UsersInfo[]>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
-        private bool disposedValue = false;
 
         public UsersRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
         {
             _context = myShuttleBusAppNewDBContext;
         }
 
-        public string Create(string name, string phoneNumber, string email)
+        public string Create(UsersInfo usersInfo)
         {
-            string check = AppTools.UsersValuesValidation(name, ref phoneNumber, ref email);
+            string check = UsersInputValidation.UsersValuesValidation(usersInfo);
 
             if (check != "ok") return check;
 
@@ -25,10 +24,10 @@ namespace HappyBusProject.Repositories
                 User user = new()
                 {
                     Id = Guid.NewGuid(),
-                    FullName = name,
+                    FullName = usersInfo.Name,
                     Rating = 5.0,
-                    PhoneNumber = phoneNumber,
-                    Email = email.ToLower(),
+                    PhoneNumber = usersInfo.PhoneNumber,
+                    Email = usersInfo.Email.ToLower(),
                     IsInBlacklist = false,
                     RegistrationDateTime = DateTime.Now
                 };
@@ -36,14 +35,12 @@ namespace HappyBusProject.Repositories
                 _context.Users.Add(user);
                 int successUpdate = _context.SaveChanges();
                 if (successUpdate > 0) return "User succesfully added";
-                Dispose();
                 return "No changes been made";
 
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method(param)");
-                Dispose();
+                LogWriter.ErrorWriterToFile(e.Message + " " + "POST Method");
                 return e.Message;
             }
         }
@@ -58,16 +55,14 @@ namespace HappyBusProject.Repositories
                 {
                     _context.Remove(user);
                     Save();
-                    Dispose();
                     return "User successfully deleted";
                 }
-                Dispose();
                 return "No changes been made";
 
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "DELETE method");
+                LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
                 return e.Message;
             }
         }
@@ -83,13 +78,11 @@ namespace HappyBusProject.Repositories
                 {
                     result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
                 }
-                Dispose();
                 return result;
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
-                Dispose();
+                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
                 return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
@@ -105,13 +98,11 @@ namespace HappyBusProject.Repositories
                 {
                     result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
                 }
-                Dispose();
                 return result;
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "GET Method");
-                Dispose();
+                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method (by value)");
                 return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
             }
         }
@@ -121,51 +112,29 @@ namespace HappyBusProject.Repositories
             _context.SaveChanges();
         }
 
-        public string Update(string name, string phoneNumber, string email)
+        public string Update(UsersInfo usersInfo)
         {
-            string check = AppTools.UsersValuesValidation(name, ref phoneNumber, ref email);
+            string check = UsersInputValidation.UsersValuesValidation(usersInfo);
             if (check != "ok") return check;
 
             try
             {
-                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(name));
+                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(usersInfo.Name));
                 if (user != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(phoneNumber)) user.PhoneNumber = phoneNumber;
-                    if (!string.IsNullOrWhiteSpace(email)) user.Email = email;
+                    if (!string.IsNullOrWhiteSpace(usersInfo.PhoneNumber)) user.PhoneNumber = usersInfo.PhoneNumber;
+                    if (!string.IsNullOrWhiteSpace(usersInfo.Email)) user.Email = usersInfo.Email;
                     Save();
-                    Dispose();
                     return "Info successfully updated";
                 }
 
-                Dispose();
                 return "No changes been made";
-
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "PUT method");
-                Dispose();
+                LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
                 return e.Message;
             }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

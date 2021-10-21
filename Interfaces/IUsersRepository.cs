@@ -1,13 +1,13 @@
 ﻿using HappyBusProject.Interfaces;
-using System;
+using HappyBusProject.ModelsToReturn;
 
 namespace HappyBusProject.Repositories
 {
-    interface IUsersRepository<T> : IDisposable, IPerson<T>
+    interface IUsersRepository<T> : IPerson<T>
         where T : class
     {
-        string Create(string name, string phoneNumber, string email);
-        string Update(string name, string phoneNumber, string email);
+        string Create(UsersInfo usersInfo);
+        string Update(UsersInfo usersInfo);
         string Delete(string name);
         void Save();
     }

@@ -1,4 +1,5 @@
-﻿using HappyBusProject.ModelsToReturn;
+﻿using HappyBusProject.InputValidators;
+using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,13 +33,33 @@ namespace HappyBusProject.Controllers
         [HttpPost("{brand}/{seatsNum}/{registrationNumPlate}/{carAge}/{driverName}/{driverAge}/{examPass}")]
         public string PostTest(string brand, string seatsNum, string registrationNumPlate, string carAge, string driverName, string driverAge, string examPass = "1900-01-01 00:00:00")
         {
-            return _db.Create(brand, seatsNum, registrationNumPlate, carAge, driverName, driverAge, examPass);
+            DriverCarPreResultModel driverCar = new()
+            {
+                CarBrand = brand,
+                SeatsNum = seatsNum,
+                RegistrationNumPlate = registrationNumPlate,
+                CarAge = carAge,
+                DriverName = driverName,
+                DriverAge = driverAge,
+                ExamPass = examPass
+            };
+
+            var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar, out string errorMessage);
+            if (!isNotEmtpy) return errorMessage;
+
+            return _db.Create(driverCar);
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]
         public string TestPut(string driverName, string newCarBrand)
         {
-            return _db.Update(driverName, newCarBrand);
+            DriverCarPreResultModel driverCar = new()
+            {
+                DriverName = driverName,
+                CarBrand = newCarBrand
+            };
+
+            return _db.Update(driverCar);
         }
 
         [HttpDelete("{driverName}")]

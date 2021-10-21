@@ -30,13 +30,33 @@ namespace HappyBusProject.Controllers
         [HttpPost("{name}/{phoneNumber}")]
         public string Post(string name, string phoneNumber, string email)
         {
-            return _db.Create(name, phoneNumber, email);
+            var usersInput = new UsersInfo
+            {
+                Name = name,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
+
+            return _db.Create(usersInput);
         }
 
         [HttpPut("{name}")]
         public string Put(string name, string phoneNumber, string email)
         {
-            return _db.Update(name, phoneNumber, email);
+            if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(name)) return "Both fields are empty";
+
+            var usersInput = new UsersInfo
+            {
+                Name = name,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
+
+            return _db.Update(usersInput);
         }
 
         [HttpDelete("{name}")]

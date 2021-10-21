@@ -62,7 +62,7 @@ namespace HappyBusProject.Controllers
             }
             catch (Exception e)
             {
-                AppTools.ErrorWriterTpFile(e.Message + " " + "POST Method");
+                LogWriter.ErrorWriterToFile(e.Message + " " + "POST Method");
                 return e.Message;
             }
         }
