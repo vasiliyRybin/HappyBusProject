@@ -43,7 +43,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "POST Method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -66,7 +66,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -107,7 +107,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method (by value)");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -132,7 +132,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
     }

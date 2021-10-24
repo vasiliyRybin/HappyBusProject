@@ -20,13 +20,13 @@ namespace HappyBusProject.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return new ObjectResult(await _repository.GetAllAsync());
+            return new JsonResult(await _repository.GetAllAsync());
         }
 
         [HttpGet("{name}")]
         public async Task<IActionResult> Get(string name)
         {
-            return new ObjectResult(await _repository.GetByNameAsync(name));
+            return new JsonResult(await _repository.GetByNameAsync(name));
         }
 
         [HttpPost]

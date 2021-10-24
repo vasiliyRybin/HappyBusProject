@@ -55,7 +55,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message);
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -79,7 +79,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -96,7 +96,7 @@ namespace HappyBusProject.Repositories
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return new OkObjectResult(result);
+                return result;
             }
             catch (Exception e)
             {
@@ -121,7 +121,7 @@ namespace HappyBusProject.Repositories
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return new OkObjectResult(result);
+                return result;
             }
             catch (Exception e)
             {
