@@ -6,7 +6,7 @@ namespace HappyBusProject.InputValidators
 {
     public static class DriversInputValidation
     {
-        public static bool IsEmptyInputValues(DriverCarPreResultModel driverCar, out string errorMessage)
+        public static bool IsEmptyInputValues(DriverCarPreResultModel driverCar)
         {
             if (string.IsNullOrWhiteSpace(driverCar.CarBrand)
                 || string.IsNullOrWhiteSpace(driverCar.SeatsNum)
@@ -14,17 +14,14 @@ namespace HappyBusProject.InputValidators
                 || string.IsNullOrWhiteSpace(driverCar.CarAge)
                )
             {
-                errorMessage = "Car info fields shall not be empty";
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(driverCar.DriverName) || string.IsNullOrWhiteSpace(driverCar.DriverAge))
             {
-                errorMessage = "Driver info fields shall not be empty";
                 return false;
             }
 
-            errorMessage = string.Empty;
             return true;
         }
 

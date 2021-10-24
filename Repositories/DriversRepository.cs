@@ -1,7 +1,10 @@
 ﻿using HappyBusProject.InputValidators;
 using HappyBusProject.ModelsToReturn;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
@@ -14,10 +17,10 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext;
         }
 
-        public string Create(DriverCarPreResultModel driverCar)
+        public async Task<IActionResult> CreateAsync(DriverCarPreResultModel driverCar)
         {
-            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out string errorMessage);
-            if (!isNotValid) return errorMessage;
+            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
+            if (!isNotValid) return new BadRequestResult();
 
             try
             {
@@ -42,21 +45,21 @@ namespace HappyBusProject.Repositories
                     MedicalExamPassDate = resultExamPass
                 };
 
-                _context.Drivers.Add(driver);
-                _context.Cars.Add(car);
-                int successUpdate = _context.SaveChanges();
-                if (successUpdate > 0) return "Driver succesfully added";
-                else return "No changes been made";
+                await _context.Drivers.AddAsync(driver);
+                await _context.Cars.AddAsync(car);
+                int successUpdate = await _context.SaveChangesAsync();
+                if (successUpdate > 0) return new OkResult();
+                else return new NoContentResult();
 
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message);
-                return e.Message;
+                return new ObjectResult(e.Message);
             }
         }
 
-        public string Delete(string name)
+        public async Task<IActionResult> DeleteAsync(string name)
         {
             try
             {
@@ -67,24 +70,24 @@ namespace HappyBusProject.Repositories
                 {
                     _context.Remove(driver);
                     _context.Remove(carToRemove);
-                    Save();
-                    return "Driver successfully deleted";
+                    await _context.SaveChangesAsync();
+                    return new OkResult();
                 }
-                return "No changes been made";
+                return new NoContentResult();
 
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
-                return e.Message;
+                return new ObjectResult(e.Message);
             }
         }
 
-        public DriverInfo[] GetAll()
+        public async Task<DriverInfo[]> GetAllAsync()
         {
             try
             {
-                var drivers = _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+                var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
 
@@ -102,11 +105,14 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public DriverInfo[] GetByName(string name)
+        public async Task<DriverInfo[]> GetByNameAsync(string name)
         {
             try
             {
-                var drivers = _context.Drivers.Where(d => d.Name.Contains(name)).Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToList();
+                var drivers = await _context.Drivers.Where(d => d.Name.Contains(name))
+                                      .Join(_context.Cars, d => d.CarId, c => c.Id,
+                                      (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
+                                      .ToListAsync();
 
                 DriverInfo[] result = new DriverInfo[drivers.Count];
 
@@ -124,9 +130,9 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public string Update(DriverCarPreResultModel driverCar)
+        public async Task<IActionResult> UpdateAsync(DriverCarPreResultModel driverCar)
         {
-            if (!DriversInputValidation.PutMethodInputValidation(driverCar, out string errorMessage)) return errorMessage;
+            if (!DriversInputValidation.PutMethodInputValidation(driverCar, out string errorMessage)) return new BadRequestResult();
 
             try
             {
@@ -135,21 +141,16 @@ namespace HappyBusProject.Repositories
                 if (car != null)
                 {
                     car.Brand = driverCar.CarBrand;
-                    Save();
-                    return "Info successfully updated";
+                    await _context.SaveChangesAsync();
+                    return new OkResult();
                 }
-                return "No changes been made";
+                return new NoContentResult();
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
-                return e.Message;
+                return new ObjectResult(e.Message);
             }
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
         }
     }
 }

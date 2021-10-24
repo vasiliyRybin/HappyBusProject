@@ -1,7 +1,7 @@
 ﻿using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
 {
@@ -9,26 +9,27 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<UsersInfo[]> _db;
-        public UsersController(UsersRepository usersRepository)
+        private readonly IUsersRepository<UsersInfo[]> _repository;
+
+        public UsersController(IUsersRepository<UsersInfo[]> usersRepository)
         {
-            _db = usersRepository;
+            _repository = usersRepository;
         }
 
         [HttpGet]
-        public UsersInfo[] Get()
+        public async Task<IActionResult> Get()
         {
-            return _db.GetAll();
+            return new JsonResult(await _repository.GetAllAsync());
         }
 
         [HttpGet("{name}")]
-        public UsersInfo[] Get(string name)
+        public async Task<IActionResult> Get(string name)
         {
-            return _db.GetByName(name);
+            return new JsonResult(await _repository.GetByNameAsync(name));
         }
 
         [HttpPost("{name}/{phoneNumber}")]
-        public string Post(string name, string phoneNumber, string email)
+        public async Task<IActionResult> Post(string name, string phoneNumber, string email)
         {
             var usersInput = new UsersInfo
             {
@@ -39,13 +40,13 @@ namespace HappyBusProject.Controllers
 
             UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
 
-            return _db.Create(usersInput);
+            return await _repository.CreateAsync(usersInput);
         }
 
         [HttpPut("{name}")]
-        public string Put(string name, string phoneNumber, string email)
+        public async Task<IActionResult> Put(string name, string phoneNumber, string email)
         {
-            if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(name)) return "Both fields are empty";
+            if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email)) return new BadRequestResult();
 
             var usersInput = new UsersInfo
             {
@@ -56,13 +57,13 @@ namespace HappyBusProject.Controllers
 
             UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
 
-            return _db.Update(usersInput);
+            return await _repository.UpdateAsync(usersInput);
         }
 
         [HttpDelete("{name}")]
-        public string Delete(string name)
+        public async Task<IActionResult> Delete(string name)
         {
-            return _db.Delete(name);
+            return await _repository.DeleteAsync(name);
         }
     }
 }

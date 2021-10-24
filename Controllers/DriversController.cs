@@ -2,8 +2,7 @@
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
-
-#pragma warning disable CA1806
+using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
 {
@@ -11,47 +10,36 @@ namespace HappyBusProject.Controllers
     [Route("AppAPI/Drivers")]
     public class DriversController : ControllerBase
     {
-        private readonly IDriversRepository<DriverInfo[]> _db;
+        private readonly IDriversRepository<DriverInfo[]> _repository;
 
-        public DriversController(DriversRepository driversRepository)
+        public DriversController(IDriversRepository<DriverInfo[]> driversRepository)
         {
-            _db = driversRepository;
+            _repository = driversRepository;
         }
 
         [HttpGet]
-        public DriverInfo[] Get()
+        public async Task<IActionResult> Get()
         {
-            return _db.GetAll();
+            return new JsonResult(await _repository.GetAllAsync());
         }
 
         [HttpGet("{name}")]
-        public DriverInfo[] Get(string name)
+        public async Task<IActionResult> Get(string name)
         {
-            return _db.GetByName(name);
+            return new JsonResult(await _repository.GetByNameAsync(name));
         }
 
-        [HttpPost("{brand}/{seatsNum}/{registrationNumPlate}/{carAge}/{driverName}/{driverAge}/{examPass}")]
-        public string PostTest(string brand, string seatsNum, string registrationNumPlate, string carAge, string driverName, string driverAge, string examPass = "1900-01-01 00:00:00")
+        [HttpPost]
+        public async Task<IActionResult> PostTest([FromQuery] DriverCarPreResultModel driverCar)
         {
-            DriverCarPreResultModel driverCar = new()
-            {
-                CarBrand = brand,
-                SeatsNum = seatsNum,
-                RegistrationNumPlate = registrationNumPlate,
-                CarAge = carAge,
-                DriverName = driverName,
-                DriverAge = driverAge,
-                ExamPass = examPass
-            };
+            var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
+            if (!isNotEmtpy) return new BadRequestResult();
 
-            var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar, out string errorMessage);
-            if (!isNotEmtpy) return errorMessage;
-
-            return _db.Create(driverCar);
+            return Created(" ", await _repository.CreateAsync(driverCar));
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]
-        public string TestPut(string driverName, string newCarBrand)
+        public async Task<IActionResult> TestPut(string driverName, string newCarBrand)
         {
             DriverCarPreResultModel driverCar = new()
             {
@@ -59,13 +47,13 @@ namespace HappyBusProject.Controllers
                 CarBrand = newCarBrand
             };
 
-            return _db.Update(driverCar);
+            return await _repository.UpdateAsync(driverCar);
         }
 
         [HttpDelete("{driverName}")]
-        public string TestDelete(string driverName)
+        public async Task<IActionResult> TestDelete(string driverName)
         {
-            return _db.Delete(driverName);
+            return await _repository.DeleteAsync(driverName);
         }
     }
 }

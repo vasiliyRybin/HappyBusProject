@@ -21,7 +21,7 @@ namespace HappyBusProject
         {
             services.AddControllers();
             services.AddSwaggerGen();
-            services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
+            services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
             services.AddTransientScopedSingletonEntities();
         }
 

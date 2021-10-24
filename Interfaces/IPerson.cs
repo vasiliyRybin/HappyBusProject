@@ -1,8 +1,10 @@
-﻿namespace HappyBusProject.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace HappyBusProject.Interfaces
 {
-    interface IPerson<T>
+    public interface IPerson<T>
     {
-        T GetAll();
-        T GetByName(string name);
+        Task<T> GetAllAsync();
+        Task<T> GetByNameAsync(string name);
     }
 }
