@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HappyBusProject.Interfaces
 {
-    public interface IPerson<T>
+    public interface IPerson<T> where T : class
     {
-        Task<T> GetAllAsync();
-        Task<T> GetByNameAsync(string name);
+        Task<ActionResult<T>> GetAllAsync();
+        Task<ActionResult<T>> GetByNameAsync(string name);
     }
 }

@@ -83,7 +83,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<DriverInfo[]> GetAllAsync()
+        public async Task<ActionResult<DriverInfo[]>> GetAllAsync()
         {
             try
             {
@@ -96,16 +96,16 @@ namespace HappyBusProject.Repositories
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return result;
+                return new OkObjectResult(result);
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
-                return new DriverInfo[] { new DriverInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
-        public async Task<DriverInfo[]> GetByNameAsync(string name)
+        public async Task<ActionResult<DriverInfo[]>> GetByNameAsync(string name)
         {
             try
             {
@@ -121,12 +121,12 @@ namespace HappyBusProject.Repositories
                     result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
-                return result;
+                return new OkObjectResult(result);
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
-                return new DriverInfo[] { new DriverInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
+                return new BadRequestObjectResult(e.Message);
             }
         }
 
@@ -149,7 +149,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
-                return new ObjectResult(e.Message);
+                return new BadRequestObjectResult(e.Message);
             }
         }
     }

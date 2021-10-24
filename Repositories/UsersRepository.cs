@@ -70,7 +70,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<UsersInfo[]> GetAllAsync()
+        public async Task<ActionResult<UsersInfo[]>> GetAllAsync()
         {
             try
             {
@@ -87,11 +87,11 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
-                return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
+                return new ObjectResult(e.Message);
             }
         }
 
-        public async Task<UsersInfo[]> GetByNameAsync(string value)
+        public async Task<ActionResult<UsersInfo[]>> GetByNameAsync(string value)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace HappyBusProject.Repositories
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method (by value)");
-                return new UsersInfo[] { new UsersInfo { ErrorMessage = DateTime.Now + " " + e.Message } };
+                return new ObjectResult(e.Message);
             }
         }
 
