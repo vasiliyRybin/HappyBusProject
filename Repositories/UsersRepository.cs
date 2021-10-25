@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class UsersRepository : IUsersRepository<UsersInfo[]>
+    public class UsersRepository : IUsersRepository<UsersInfo[], UsersInfo>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
@@ -91,18 +91,25 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<UsersInfo[]>> GetByNameAsync(string value)
+        public async Task<ActionResult<UsersInfo>> GetByNameAsync(string value)
         {
             try
             {
-                var users = await _context.Users.Where(u => u.FullName.Contains(value)).ToListAsync();
-                UsersInfo[] result = new UsersInfo[users.Count];
-
-                for (int i = 0; i < result.Length; i++)
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.FullName.Contains(value));
+                if (user != null)
                 {
-                    result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
+                    var userResult = new UsersInfo() 
+                    { 
+                        Name = user.FullName, 
+                        Rating = user.Rating, 
+                        PhoneNumber = user.PhoneNumber, 
+                        Email = user.Email, 
+                        IsInBlackList = user.IsInBlacklist 
+                    };
+
+                    return userResult;
                 }
-                return result;
+                else return new NotFoundResult();
             }
             catch (Exception e)
             {

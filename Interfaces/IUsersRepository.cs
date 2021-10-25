@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public interface IUsersRepository<T> : IPerson<T>
+    public interface IUsersRepository<T, T1> : IPerson<T, T1>
         where T : class
+        where T1 : class
     {
         Task<IActionResult> CreateAsync(UsersInfo usersInfo);
         Task<IActionResult> UpdateAsync(UsersInfo usersInfo);

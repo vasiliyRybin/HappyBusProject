@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Interfaces
 {
-    public interface IPerson<T> where T : class
+    public interface IPerson<T, T1>
+        where T : class
+        where T1 : class
     {
         Task<ActionResult<T>> GetAllAsync();
-        Task<ActionResult<T>> GetByNameAsync(string name);
+        Task<ActionResult<T1>> GetByNameAsync(string name);
     }
 }

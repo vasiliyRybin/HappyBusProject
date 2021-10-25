@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class DriversRepository : IDriversRepository<DriverInfo[]>
+    public class DriversRepository : IDriversRepository<DriverInfo[], DriverInfo>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
@@ -105,7 +105,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<DriverInfo[]>> GetByNameAsync(string name)
+        public async Task<ActionResult<DriverInfo>> GetByNameAsync(string name)
         {
             try
             {
@@ -114,14 +114,20 @@ namespace HappyBusProject.Repositories
                                       (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
                                       .ToListAsync();
 
-                DriverInfo[] result = new DriverInfo[drivers.Count];
-
-                for (int i = 0; i < result.Length; i++)
+                if(drivers.Count != 0)
                 {
-                    result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                    var driver = new DriverInfo()
+                    {
+                        Name = drivers[0].Name,
+                        Age = drivers[0].Age,
+                        CarBrand = drivers[0].CarBrand,
+                        Rating = drivers[0].Rating
+                    };
+
+                    return driver;
                 }
 
-                return result;
+                return new NotFoundResult();
             }
             catch (Exception e)
             {

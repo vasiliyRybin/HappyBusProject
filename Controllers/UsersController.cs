@@ -9,9 +9,9 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<UsersInfo[]> _repository;
+        private readonly IUsersRepository<UsersInfo[], UsersInfo> _repository;
 
-        public UsersController(IUsersRepository<UsersInfo[]> usersRepository)
+        public UsersController(IUsersRepository<UsersInfo[], UsersInfo> usersRepository)
         {
             _repository = usersRepository;
         }

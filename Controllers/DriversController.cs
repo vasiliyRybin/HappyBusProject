@@ -10,9 +10,9 @@ namespace HappyBusProject.Controllers
     [Route("AppAPI/Drivers")]
     public class DriversController : ControllerBase
     {
-        private readonly IDriversRepository<DriverInfo[]> _repository;
+        private readonly IDriversRepository<DriverInfo[], DriverInfo> _repository;
 
-        public DriversController(IDriversRepository<DriverInfo[]> driversRepository)
+        public DriversController(IDriversRepository<DriverInfo[], DriverInfo> driversRepository)
         {
             _repository = driversRepository;
         }
