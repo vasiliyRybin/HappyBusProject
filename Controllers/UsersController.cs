@@ -29,7 +29,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPost("{name}/{phoneNumber}")]
-        public async Task<IActionResult> Post(string name, string phoneNumber, string email)
+        public async Task<ActionResult<UsersInfo>> Post(string name, string phoneNumber, string email)
         {
             var usersInput = new UsersInfo
             {

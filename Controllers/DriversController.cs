@@ -35,7 +35,7 @@ namespace HappyBusProject.Controllers
             var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
             if (!isNotEmtpy) return new BadRequestResult();
 
-            return Created(" ", await _repository.CreateAsync(driverCar));
+            return new OkObjectResult(await _repository.CreateAsync(driverCar));
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]

@@ -16,7 +16,7 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
         }
 
-        public async Task<IActionResult> CreateAsync(UsersInfo usersInfo)
+        public async Task<ActionResult<UsersInfo>> CreateAsync(UsersInfo usersInfo)
         {
             var check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
 
@@ -37,7 +37,7 @@ namespace HappyBusProject.Repositories
 
                 await _context.Users.AddAsync(user);
                 int successUpdate = _context.SaveChanges();
-                if (successUpdate > 0) return new OkResult();
+                if (successUpdate > 0) return new OkObjectResult(user);
                 return new NoContentResult();
             }
             catch (Exception e)
@@ -60,7 +60,7 @@ namespace HappyBusProject.Repositories
                     return new OkObjectResult("User successfully deleted");
                 }
 
-                return new NoContentResult();
+                return new NotFoundResult();
 
             }
             catch (Exception e)

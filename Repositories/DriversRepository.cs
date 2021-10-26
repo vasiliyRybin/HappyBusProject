@@ -17,7 +17,7 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext;
         }
 
-        public async Task<IActionResult> CreateAsync(DriverCarPreResultModel driverCar)
+        public async Task<ActionResult<DriverInfo>> CreateAsync(DriverCarPreResultModel driverCar)
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
             if (!isNotValid) return new BadRequestResult();
@@ -45,10 +45,18 @@ namespace HappyBusProject.Repositories
                     MedicalExamPassDate = resultExamPass
                 };
 
+                DriverInfo driverInfo = new()
+                {
+                    Age = driver.Age,
+                    Name = driver.Name,
+                    CarBrand = car.Brand,
+                    Rating = driver.Rating
+                };
+
                 await _context.Drivers.AddAsync(driver);
                 await _context.Cars.AddAsync(car);
                 int successUpdate = await _context.SaveChangesAsync();
-                if (successUpdate > 0) return new OkResult();
+                if (successUpdate > 0) return new OkObjectResult(driverInfo);
                 else return new NoContentResult();
 
             }

@@ -9,7 +9,7 @@ namespace HappyBusProject.Repositories
         where T : class
         where T1 : class
     {
-        Task<IActionResult> CreateAsync(UsersInfo usersInfo);
+        Task<ActionResult<T1>> CreateAsync(UsersInfo usersInfo);
         Task<IActionResult> UpdateAsync(UsersInfo usersInfo);
         Task<IActionResult> DeleteAsync(string name);
     }
