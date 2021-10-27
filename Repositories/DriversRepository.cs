@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class DriversRepository : IDriversRepository<DriverInfo[], DriverInfo>
+    public class DriversRepository : IDriversRepository<DriverViewModel[], DriverViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
@@ -17,7 +17,7 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext;
         }
 
-        public async Task<ActionResult<DriverInfo>> CreateAsync(DriverCarPreResultModel driverCar)
+        public async Task<ActionResult<DriverViewModel>> CreateAsync(DriverCarPreResultModel driverCar)
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
             if (!isNotValid) return new BadRequestResult();
@@ -45,7 +45,7 @@ namespace HappyBusProject.Repositories
                     MedicalExamPassDate = resultExamPass
                 };
 
-                DriverInfo driverInfo = new()
+                DriverViewModel driverInfo = new()
                 {
                     Age = driver.Age,
                     Name = driver.Name,
@@ -66,6 +66,7 @@ namespace HappyBusProject.Repositories
                 return new BadRequestObjectResult(e.Message);
             }
         }
+
 
         public async Task<IActionResult> DeleteAsync(string name)
         {
@@ -91,17 +92,17 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<DriverInfo[]>> GetAllAsync()
+        public async Task<ActionResult<DriverViewModel[]>> GetAllAsync()
         {
             try
             {
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
 
-                DriverInfo[] result = new DriverInfo[drivers.Count];
+                DriverViewModel[] result = new DriverViewModel[drivers.Count];
 
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = new DriverInfo { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                    result[i] = new DriverViewModel { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                 }
 
                 return result;
@@ -113,18 +114,18 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<DriverInfo>> GetByNameAsync(string name)
+        public async Task<ActionResult<DriverViewModel>> GetByNameAsync(string name)
         {
             try
             {
                 var drivers = await _context.Drivers.Where(d => d.Name.Contains(name))
-                                      .Join(_context.Cars, d => d.CarId, c => c.Id,
-                                      (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
-                                      .ToListAsync();
+                                                    .Join(_context.Cars, d => d.CarId, c => c.Id,
+                                                    (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
+                                                    .ToListAsync();
 
-                if(drivers.Count != 0)
+                if (drivers.Count != 0)
                 {
-                    var driver = new DriverInfo()
+                    var driver = new DriverViewModel()
                     {
                         Name = drivers[0].Name,
                         Age = drivers[0].Age,

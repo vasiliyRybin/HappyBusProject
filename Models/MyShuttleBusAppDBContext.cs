@@ -11,7 +11,7 @@ namespace HappyBusProject
         {
         }
 
-        public MyShuttleBusAppNewDBContext(DbContextOptions<MyShuttleBusAppNewDBContext> options) : base(options) {  }
+        public MyShuttleBusAppNewDBContext(DbContextOptions<MyShuttleBusAppNewDBContext> options) : base(options) { }
 
         public virtual DbSet<Car> Cars { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }

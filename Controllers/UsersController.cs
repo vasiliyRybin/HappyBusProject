@@ -9,9 +9,9 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<UsersInfo[], UsersInfo> _repository;
+        private readonly IUsersRepository<UsersViewModel[], UsersViewModel> _repository;
 
-        public UsersController(IUsersRepository<UsersInfo[], UsersInfo> usersRepository)
+        public UsersController(IUsersRepository<UsersViewModel[], UsersViewModel> usersRepository)
         {
             _repository = usersRepository;
         }
@@ -29,9 +29,9 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPost("{name}/{phoneNumber}")]
-        public async Task<ActionResult<UsersInfo>> Post(string name, string phoneNumber, string email)
+        public async Task<ActionResult<UsersViewModel>> Post(string name, string phoneNumber, string email)
         {
-            var usersInput = new UsersInfo
+            var usersInput = new UsersViewModel
             {
                 Name = name,
                 Email = email,
@@ -48,7 +48,7 @@ namespace HappyBusProject.Controllers
         {
             if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email)) return new BadRequestResult();
 
-            var usersInput = new UsersInfo
+            var usersInput = new UsersViewModel
             {
                 Name = name,
                 Email = email,

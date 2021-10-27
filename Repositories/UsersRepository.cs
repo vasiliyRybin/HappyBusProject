@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class UsersRepository : IUsersRepository<UsersInfo[], UsersInfo>
+    public class UsersRepository : IUsersRepository<UsersViewModel[], UsersViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
@@ -16,7 +16,7 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
         }
 
-        public async Task<ActionResult<UsersInfo>> CreateAsync(UsersInfo usersInfo)
+        public async Task<ActionResult<UsersViewModel>> CreateAsync(UsersViewModel usersInfo)
         {
             var check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
 
@@ -70,16 +70,16 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<UsersInfo[]>> GetAllAsync()
+        public async Task<ActionResult<UsersViewModel[]>> GetAllAsync()
         {
             try
             {
                 var users = await _context.Users.ToListAsync();
-                UsersInfo[] result = new UsersInfo[users.Count];
+                UsersViewModel[] result = new UsersViewModel[users.Count];
 
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = new UsersInfo { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
+                    result[i] = new UsersViewModel { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
                 }
 
                 return result;
@@ -91,20 +91,20 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<UsersInfo>> GetByNameAsync(string value)
+        public async Task<ActionResult<UsersViewModel>> GetByNameAsync(string value)
         {
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.FullName.Contains(value));
                 if (user != null)
                 {
-                    var userResult = new UsersInfo() 
-                    { 
-                        Name = user.FullName, 
-                        Rating = user.Rating, 
-                        PhoneNumber = user.PhoneNumber, 
-                        Email = user.Email, 
-                        IsInBlackList = user.IsInBlacklist 
+                    var userResult = new UsersViewModel()
+                    {
+                        Name = user.FullName,
+                        Rating = user.Rating,
+                        PhoneNumber = user.PhoneNumber,
+                        Email = user.Email,
+                        IsInBlackList = user.IsInBlacklist
                     };
 
                     return userResult;
@@ -118,7 +118,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<IActionResult> UpdateAsync(UsersInfo usersInfo)
+        public async Task<IActionResult> UpdateAsync(UsersViewModel usersInfo)
         {
             bool check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
             if (!check) return new BadRequestObjectResult(errorMessage);
