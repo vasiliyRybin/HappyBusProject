@@ -58,7 +58,6 @@ namespace HappyBusProject.Repositories
                 int successUpdate = await _context.SaveChangesAsync();
                 if (successUpdate > 0) return new OkObjectResult(driverInfo);
                 else return new NoContentResult();
-
             }
             catch (Exception e)
             {
