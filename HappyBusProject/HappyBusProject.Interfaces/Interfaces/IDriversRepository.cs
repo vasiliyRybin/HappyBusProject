@@ -9,8 +9,8 @@ namespace HappyBusProject.Repositories
         where T : class
         where T1 : class
     {
-        Task<ActionResult<T1>> CreateAsync(DriverCarPreResultModel driverInfo);
-        Task<IActionResult> UpdateAsync(DriverCarPreResultModel driverInfo);
+        Task<ActionResult<T1>> CreateAsync(DriverCarInputModel driverInfo);
+        Task<IActionResult> UpdateAsync(DriverCarInputModel driverInfo);
         Task<IActionResult> DeleteAsync(string name);
     }
 }

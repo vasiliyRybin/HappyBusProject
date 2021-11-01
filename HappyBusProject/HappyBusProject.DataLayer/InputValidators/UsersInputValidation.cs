@@ -1,4 +1,4 @@
-﻿using HappyBusProject.ModelsToReturn;
+﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -6,20 +6,20 @@ namespace HappyBusProject
 {
     public static class UsersInputValidation
     {
-        public static void AssignEmptyStringsToNullValues(UsersViewModel usersInfo)
+        public static void AssignEmptyStringsToNullValues(UserInputModel usersInfo)
         {
             if (string.IsNullOrWhiteSpace(usersInfo.PhoneNumber)) usersInfo.PhoneNumber = string.Empty;
             if (string.IsNullOrWhiteSpace(usersInfo.Email)) usersInfo.Email = string.Empty;
         }
 
-        public static bool UsersValuesValidation(UsersViewModel usersInfo, out string errorMessage)
+        public static bool UsersValuesValidation(UserInputModel usersInfo, out string errorMessage)
         {
-            if (string.IsNullOrWhiteSpace(usersInfo.Name) && string.IsNullOrWhiteSpace(usersInfo.PhoneNumber) && string.IsNullOrWhiteSpace(usersInfo.Email))
+            if (string.IsNullOrWhiteSpace(usersInfo.FullName) && string.IsNullOrWhiteSpace(usersInfo.PhoneNumber) && string.IsNullOrWhiteSpace(usersInfo.Email))
             {
                 errorMessage = "Name, phone and email fields empty";
                 return false;
             }
-            if (usersInfo.Name.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(usersInfo.Name))
+            if (usersInfo.FullName.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(usersInfo.FullName))
             {
                 errorMessage = "Invalid name";
                 return false;

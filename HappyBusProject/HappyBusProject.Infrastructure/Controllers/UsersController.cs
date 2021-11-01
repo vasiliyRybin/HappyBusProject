@@ -1,4 +1,6 @@
-﻿using HappyBusProject.ModelsToReturn;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -28,36 +30,22 @@ namespace HappyBusProject.Controllers
             return new ObjectResult(await _repository.GetByNameAsync(name));
         }
 
-        [HttpPost("{name}/{phoneNumber}")]
-        public async Task<ActionResult<UsersViewModel>> Post(string name, string phoneNumber, string email)
+        [HttpPost]
+        public async Task<ActionResult<UsersViewModel>> Post([FromQuery] UserInputModel userInput)
         {
-            var usersInput = new UsersViewModel
-            {
-                Name = name,
-                Email = email,
-                PhoneNumber = phoneNumber
-            };
+            UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
 
-            UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
-
-            return await _repository.CreateAsync(usersInput);
+            return await _repository.CreateAsync(userInput);
         }
 
-        [HttpPut("{name}")]
-        public async Task<IActionResult> Put(string name, string phoneNumber, string email)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromQuery] UserInputModel userInput)
         {
-            if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email)) return new BadRequestResult();
+            if (string.IsNullOrWhiteSpace(userInput.PhoneNumber) && string.IsNullOrWhiteSpace(userInput.Email)) return new BadRequestResult();
 
-            var usersInput = new UsersViewModel
-            {
-                Name = name,
-                Email = email,
-                PhoneNumber = phoneNumber
-            };
+            UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
 
-            UsersInputValidation.AssignEmptyStringsToNullValues(usersInput);
-
-            return await _repository.UpdateAsync(usersInput);
+            return await _repository.UpdateAsync(userInput);
         }
 
         [HttpDelete("{name}")]

@@ -23,7 +23,7 @@ namespace HappyBusProject.Tests
             return await Task.FromResult(drivers);
         }
 
-        private DriverViewModel CreateDriver(DriverCarPreResultModel driverCar, out string errorMessage)
+        private DriverViewModel CreateDriver(DriverCarInputModel driverCar, out string errorMessage)
         {
             var _context = new List<DriverViewModel>();
 
@@ -65,7 +65,7 @@ namespace HappyBusProject.Tests
         [Fact]
         public void CreateDriverWrongInput()
         {
-            var newDriver = new DriverCarPreResultModel()
+            var newDriver = new DriverCarInputModel()
             {
                 DriverName = "Grisha Pumpkin",
                 DriverAge = "85",

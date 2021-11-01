@@ -30,7 +30,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostTest([FromQuery] DriverCarPreResultModel driverCar)
+        public async Task<IActionResult> PostTest([FromQuery] DriverCarInputModel driverCar)
         {
             var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
             if (!isNotEmtpy) return new BadRequestResult();
@@ -41,7 +41,7 @@ namespace HappyBusProject.Controllers
         [HttpPut("{driverName}/{newCarBrand}")]
         public async Task<IActionResult> TestPut(string driverName, string newCarBrand)
         {
-            DriverCarPreResultModel driverCar = new()
+            DriverCarInputModel driverCar = new()
             {
                 DriverName = driverName,
                 CarBrand = newCarBrand

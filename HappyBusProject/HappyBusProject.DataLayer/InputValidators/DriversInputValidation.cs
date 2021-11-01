@@ -6,7 +6,7 @@ namespace HappyBusProject.InputValidators
 {
     public static class DriversInputValidation
     {
-        public static bool IsEmptyInputValues(DriverCarPreResultModel driverCar)
+        public static bool IsEmptyInputValues(DriverCarInputModel driverCar)
         {
             if (string.IsNullOrWhiteSpace(driverCar.CarBrand)
                 || string.IsNullOrWhiteSpace(driverCar.SeatsNum)
@@ -25,7 +25,7 @@ namespace HappyBusProject.InputValidators
             return true;
         }
 
-        public static bool PutMethodInputValidation(DriverCarPreResultModel driverCar, out string errorMessage)
+        public static bool PutMethodInputValidation(DriverCarInputModel driverCar, out string errorMessage)
         {
             if (driverCar.CarBrand.Length > 30)
             {
@@ -37,7 +37,7 @@ namespace HappyBusProject.InputValidators
             return true;
         }
 
-        public static bool DriversInputValidator(DriverCarPreResultModel driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime dateTimeResult, out string errorMessage)
+        public static bool DriversInputValidator(DriverCarInputModel driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime dateTimeResult, out string errorMessage)
         {
             if (driverCar.CarBrand.Length > 30)
             {

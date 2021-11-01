@@ -1,4 +1,5 @@
-﻿using HappyBusProject.InputValidators;
+﻿using AutoMapper;
+using HappyBusProject.InputValidators;
 using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace HappyBusProject.Repositories
             _context = myShuttleBusAppNewDBContext;
         }
 
-        public async Task<ActionResult<DriverViewModel>> CreateAsync(DriverCarPreResultModel driverCar)
+        public async Task<ActionResult<DriverViewModel>> CreateAsync(DriverCarInputModel driverCar)
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
             if (!isNotValid) return new BadRequestResult();
@@ -96,6 +97,8 @@ namespace HappyBusProject.Repositories
             try
             {
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
+                var drivers2 = await _context.Drivers.ToListAsync();
+                var cars = await _context.Cars.ToListAsync();
 
                 DriverViewModel[] result = new DriverViewModel[drivers.Count];
 
@@ -144,7 +147,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<IActionResult> UpdateAsync(DriverCarPreResultModel driverCar)
+        public async Task<IActionResult> UpdateAsync(DriverCarInputModel driverCar)
         {
             if (!DriversInputValidation.PutMethodInputValidation(driverCar, out string errorMessage)) return new BadRequestResult();
 

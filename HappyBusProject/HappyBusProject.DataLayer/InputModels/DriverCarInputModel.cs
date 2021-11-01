@@ -1,6 +1,6 @@
 ﻿namespace HappyBusProject.ModelsToReturn
 {
-    public class DriverCarPreResultModel
+    public class DriverCarInputModel
     {
         public string DriverName { get; set; }
         public string DriverAge { get; set; }

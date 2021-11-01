@@ -1,4 +1,6 @@
-﻿using HappyBusProject.ModelsToReturn;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,13 +12,15 @@ namespace HappyBusProject.Repositories
     public class UsersRepository : IUsersRepository<UsersViewModel[], UsersViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
+        private readonly IMapper _mapper;
 
-        public UsersRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        public UsersRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext, IMapper mapper)
         {
             _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
+            _mapper = mapper;
         }
 
-        public async Task<ActionResult<UsersViewModel>> CreateAsync(UsersViewModel usersInfo)
+        public async Task<ActionResult<UsersViewModel>> CreateAsync(UserInputModel usersInfo)
         {
             var check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
 
@@ -24,16 +28,11 @@ namespace HappyBusProject.Repositories
 
             try
             {
-                User user = new()
-                {
-                    Id = Guid.NewGuid(),
-                    FullName = usersInfo.Name,
-                    Rating = 5.0,
-                    PhoneNumber = usersInfo.PhoneNumber,
-                    Email = usersInfo.Email.ToLower(),
-                    IsInBlacklist = false,
-                    RegistrationDateTime = DateTime.Now
-                };
+                var user = _mapper.Map<User>(usersInfo);
+                user.Id = Guid.NewGuid();
+                user.RegistrationDateTime = DateTime.Now;
+                user.Rating = 5.0;
+                user.IsInBlacklist = false;
 
                 await _context.Users.AddAsync(user);
                 int successUpdate = _context.SaveChanges();
@@ -79,7 +78,7 @@ namespace HappyBusProject.Repositories
 
                 for (int i = 0; i < result.Length; i++)
                 {
-                    result[i] = new UsersViewModel { Name = users[i].FullName, Rating = users[i].Rating, PhoneNumber = users[i].PhoneNumber, Email = users[i].Email, IsInBlackList = users[i].IsInBlacklist };
+                    result[i] = _mapper.Map<UsersViewModel>(users[i]);
                 }
 
                 return result;
@@ -98,14 +97,7 @@ namespace HappyBusProject.Repositories
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.FullName.Contains(value));
                 if (user != null)
                 {
-                    var userResult = new UsersViewModel()
-                    {
-                        Name = user.FullName,
-                        Rating = user.Rating,
-                        PhoneNumber = user.PhoneNumber,
-                        Email = user.Email,
-                        IsInBlackList = user.IsInBlacklist
-                    };
+                    var userResult = _mapper.Map<UsersViewModel>(user);
 
                     return userResult;
                 }
@@ -118,14 +110,14 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<IActionResult> UpdateAsync(UsersViewModel usersInfo)
+        public async Task<IActionResult> UpdateAsync(UserInputModel usersInfo)
         {
             bool check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
             if (!check) return new BadRequestObjectResult(errorMessage);
 
             try
             {
-                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(usersInfo.Name));
+                var user = _context.Users.FirstOrDefault(c => c.FullName.Contains(usersInfo.FullName));
                 if (user != null)
                 {
                     if (!string.IsNullOrWhiteSpace(usersInfo.PhoneNumber)) user.PhoneNumber = usersInfo.PhoneNumber;

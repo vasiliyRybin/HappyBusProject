@@ -1,5 +1,5 @@
-﻿using HappyBusProject.Interfaces;
-using HappyBusProject.ModelsToReturn;
+﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -9,8 +9,8 @@ namespace HappyBusProject.Repositories
         where T : class
         where T1 : class
     {
-        Task<ActionResult<T1>> CreateAsync(UsersViewModel usersInfo);
-        Task<IActionResult> UpdateAsync(UsersViewModel usersInfo);
+        Task<ActionResult<T1>> CreateAsync(UserInputModel usersInfo);
+        Task<IActionResult> UpdateAsync(UserInputModel usersInfo);
         Task<IActionResult> DeleteAsync(string name);
     }
 }
