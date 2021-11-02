@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject", "HappyBus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.Tests", "HappyBusProject.Tests\HappyBusProject.Tests.csproj", "{75CAE445-2DAD-4D44-98C2-A2956B08B040}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyBusProject.AuthLayer", "HappyBusProject.AuthLayer\HappyBusProject.AuthLayer.csproj", "{CCBCC04D-BC09-4DC6-BA9E-F5F2EE35D609}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyBusProject.AuthLayer.Common", "HappyBusProject.AuthLayer.Common\HappyBusProject.AuthLayer.Common.csproj", "{4EFAF092-42E7-451D-860F-BF3CC9258C91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{75CAE445-2DAD-4D44-98C2-A2956B08B040}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75CAE445-2DAD-4D44-98C2-A2956B08B040}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75CAE445-2DAD-4D44-98C2-A2956B08B040}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBCC04D-BC09-4DC6-BA9E-F5F2EE35D609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBCC04D-BC09-4DC6-BA9E-F5F2EE35D609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBCC04D-BC09-4DC6-BA9E-F5F2EE35D609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBCC04D-BC09-4DC6-BA9E-F5F2EE35D609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EFAF092-42E7-451D-860F-BF3CC9258C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EFAF092-42E7-451D-860F-BF3CC9258C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EFAF092-42E7-451D-860F-BF3CC9258C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EFAF092-42E7-451D-860F-BF3CC9258C91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

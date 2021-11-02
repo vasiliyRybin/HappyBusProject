@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using HappyBusProject.InputValidators;
+﻿using HappyBusProject.InputValidators;
 using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -97,8 +96,6 @@ namespace HappyBusProject.Repositories
             try
             {
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
-                var drivers2 = await _context.Drivers.ToListAsync();
-                var cars = await _context.Cars.ToListAsync();
 
                 DriverViewModel[] result = new DriverViewModel[drivers.Count];
 

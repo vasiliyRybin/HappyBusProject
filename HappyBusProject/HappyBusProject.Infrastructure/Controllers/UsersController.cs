@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
