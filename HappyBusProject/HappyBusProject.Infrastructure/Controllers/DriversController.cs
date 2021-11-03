@@ -1,7 +1,11 @@
 ﻿using HappyBusProject.InputValidators;
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
@@ -11,6 +15,7 @@ namespace HappyBusProject.Controllers
     public class DriversController : ControllerBase
     {
         private readonly IDriversRepository<DriverViewModel[], DriverViewModel> _repository;
+        private Guid UserID => Guid.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
         public DriversController(IDriversRepository<DriverViewModel[], DriverViewModel> driversRepository)
         {
@@ -18,6 +23,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
             return new JsonResult(await _repository.GetAllAsync());

@@ -13,6 +13,7 @@ namespace HappyBusProject.AuthLayer.Models
     public enum Role
     {
         User,
+        Driver,
         Admin
     }
 }
