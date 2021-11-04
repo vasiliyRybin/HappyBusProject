@@ -2,6 +2,7 @@
 using HappyBusProject.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace HappyBusProject.Extensions
 {
@@ -19,7 +20,7 @@ namespace HappyBusProject.Extensions
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "My API",
+                    Title = "My Shuttle Bus App API",
                     Version = "v1"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -28,7 +29,7 @@ namespace HappyBusProject.Extensions
                     In = ParameterLocation.Header,
                     BearerFormat = "JWT",
                     Scheme = "bearer",
-                    Description = "Please insert JWT with Bearer into field",
+                    Description = "Please insert JWT token into field",
                     Name = "Authorization"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
@@ -41,7 +42,7 @@ namespace HappyBusProject.Extensions
                              Id = "Bearer"
                            }
                           },
-                          new string[] { }
+                          Array.Empty<string>()
                     }
                   });
             });

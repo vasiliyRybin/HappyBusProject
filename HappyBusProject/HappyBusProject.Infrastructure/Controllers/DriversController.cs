@@ -15,7 +15,7 @@ namespace HappyBusProject.Controllers
     public class DriversController : ControllerBase
     {
         private readonly IDriversRepository<DriverViewModel[], DriverViewModel> _repository;
-        private Guid UserID => Guid.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        //private Guid UserID => Guid.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
         public DriversController(IDriversRepository<DriverViewModel[], DriverViewModel> driversRepository)
         {
@@ -30,12 +30,14 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpGet("{name}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string name)
         {
             return new JsonResult(await _repository.GetByNameAsync(name));
         }
 
         [HttpPost]
+        [Authorize(Roles = "Driver, Admin")]
         public async Task<IActionResult> PostTest([FromQuery] DriverCarInputModel driverCar)
         {
             var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
@@ -45,6 +47,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]
+        [Authorize(Roles = "Driver, Admin")]
         public async Task<IActionResult> TestPut(string driverName, string newCarBrand)
         {
             DriverCarInputModel driverCar = new()
@@ -57,6 +60,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpDelete("{driverName}")]
+        [Authorize(Roles = "Driver, Admin")]
         public async Task<IActionResult> TestDelete(string driverName)
         {
             return await _repository.DeleteAsync(driverName);

@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace HappyBusProject.AuthLayer.Controllers
 {
-    [Route("AuthAPI/auth")]
+    [Route("AppAPI/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace HappyBusProject.AuthLayer.Controllers
                 Id = Guid.Parse("CE223A90-937C-4A58-BF94-93E6DE196C11"),
                 Login = "user2@gmail.com",
                 Password = "user2",
-                Roles = new Role[] { Role.User }
+                Roles = new Role[] { Role.Driver }
             },
 
             new Account()
@@ -85,7 +85,7 @@ namespace HappyBusProject.AuthLayer.Controllers
 
             foreach (var role in user.Roles)
             {
-                claims.Add(new Claim("role", role.ToString()));
+                claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
             }
 
             var token = new JwtSecurityToken

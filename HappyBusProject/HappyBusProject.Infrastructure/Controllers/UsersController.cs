@@ -1,6 +1,7 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,18 +19,21 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
             return new ObjectResult(await _repository.GetAllAsync());
         }
 
         [HttpGet("{name}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string name)
         {
             return new ObjectResult(await _repository.GetByNameAsync(name));
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult<UsersViewModel>> Post([FromQuery] UserInputModel userInput)
         {
             UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
@@ -38,7 +42,8 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromQuery] UserInputModel userInput)
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Put([FromBody] UserInputModel userInput)
         {
             if (string.IsNullOrWhiteSpace(userInput.PhoneNumber) && string.IsNullOrWhiteSpace(userInput.Email)) return new BadRequestResult();
 
@@ -48,6 +53,7 @@ namespace HappyBusProject.Controllers
         }
 
         [HttpDelete("{name}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Delete(string name)
         {
             return await _repository.DeleteAsync(name);
