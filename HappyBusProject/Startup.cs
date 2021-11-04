@@ -60,6 +60,7 @@ namespace HappyBusProject
                     );
                 }
             );
+            services.AddSwaggerAuthentication();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

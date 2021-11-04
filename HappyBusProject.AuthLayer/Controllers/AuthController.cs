@@ -51,7 +51,7 @@ namespace HappyBusProject.AuthLayer.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public IActionResult Login([FromQuery] Login request)
+        public IActionResult Login([FromBody] Login request)
         {
             var user = AuthenticateUser(request.UserLogin, request.Password);
 
