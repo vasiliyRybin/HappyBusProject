@@ -14,7 +14,7 @@ namespace HappyBusProject.Extensions
             services.AddTransient<IUsersRepository<UsersViewModel[], UsersViewModel>, UsersRepository>();
         }
 
-        public static void AddSwaggerAuthentication(this IServiceCollection services)
+        public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {

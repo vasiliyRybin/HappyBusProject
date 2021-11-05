@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +13,21 @@ namespace HappyBusProject.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly MyShuttleBusAppNewDBContext _context;
-        public OrdersController(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        private readonly IMapper _mapper;
+        public OrdersController(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext, IMapper mapper)
         {
             _context = myShuttleBusAppNewDBContext;
+            _mapper = mapper;
         }
 
-        // GET: api/<ValuesController>
+
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<ValuesController>/5
+        
         [HttpGet("{id}")]
         public string Get(int id)
         {
@@ -31,30 +35,31 @@ namespace HappyBusProject.Controllers
         }
 
 
-        [HttpPost("{userName}/{startPoint}/{endPoint}")]
-        public string Post(string userName, string startPoint, string endPoint, string orderType)
+        [HttpPost]
+        public string Post([FromBody]OrderInputModel orderInput)
         {
             var freeCars = _context.Cars.Where(c => c.IsBusyNow != true).ToArray();
             var randomCar = new Random().Next(0, freeCars.Length - 1);
             var carIDReadyToOrder = freeCars[randomCar].Id;
-            var whoOrdered = _context.Users.First(u => u.FullName == userName).Id;
-            var startPointKM = _context.RouteStops.First(c => c.Name == startPoint).RouteLengthKM;
-            var endPointKM = _context.RouteStops.First(c => c.Name == endPoint).RouteLengthKM;
+            var whoOrdered = _context.Users.First(u => u.FullName == orderInput.FullName).Id;
+            var startPointKM = _context.RouteStops.First(c => c.Name == orderInput.StartPoint).RouteLengthKM;
+            var endPointKM = _context.RouteStops.First(c => c.Name == orderInput.EndPoint).RouteLengthKM;
             double totalPrice = Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * 0.065 : (endPointKM - startPointKM) * 0.065);
 
             try
             {
-                Order order = new()
-                {
-                    CarId = carIDReadyToOrder,
-                    CustomerId = whoOrdered,
-                    Id = Guid.NewGuid(),
-                    OrderDateTime = DateTime.Now,
-                    OrderType = string.IsNullOrWhiteSpace(orderType) ? "MobileApp" : orderType,
-                    StartPointId = _context.RouteStops.First(c => c.Name == startPoint).PointId,
-                    EndPointId = _context.RouteStops.First(c => c.Name == endPoint).PointId,
-                    TotalPrice = totalPrice
-                };
+                var order = _mapper.Map();
+                //Order order = new()
+                //{
+                //    CarId = carIDReadyToOrder,
+                //    CustomerId = whoOrdered,
+                //    Id = Guid.NewGuid(),
+                //    OrderDateTime = DateTime.Now,
+                //    OrderType = string.IsNullOrWhiteSpace(orderInput.OrderType) ? "MobileApp" : orderInput.OrderType,
+                //    StartPointId = _context.RouteStops.First(c => c.Name == orderInput.StartPoint).PointId,
+                //    EndPointId = _context.RouteStops.First(c => c.Name == orderInput.EndPoint).PointId,
+                //    TotalPrice = totalPrice
+                //};
 
                 _context.Orders.Add(order);
                 _context.SaveChanges();
@@ -67,16 +72,18 @@ namespace HappyBusProject.Controllers
             }
         }
 
-        // PUT api/<ValuesController>/5
+        
         [HttpPut("{id}")]
         public void Put(int id, string value)
         {
+
         }
 
-        // DELETE api/<ValuesController>/5
+        
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
     }
 }
