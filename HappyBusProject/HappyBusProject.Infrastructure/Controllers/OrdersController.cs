@@ -48,7 +48,8 @@ namespace HappyBusProject.Controllers
 
             try
             {
-                var order = _mapper.Map();
+                var order = _mapper.Map<Order>(orderInput);
+                
                 //Order order = new()
                 //{
                 //    CarId = carIDReadyToOrder,
