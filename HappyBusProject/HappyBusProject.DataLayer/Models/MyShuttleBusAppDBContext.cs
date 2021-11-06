@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HappyBusProject.HappyBusProject.DataLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 #nullable disable
@@ -20,6 +21,7 @@ namespace HappyBusProject
         public virtual DbSet<RouteStop> RouteStops { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersRatingHistory> UsersRatingHistories { get; set; }
+        public virtual DbSet<CarsCurrentState> CarCurrentStates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

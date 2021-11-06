@@ -97,7 +97,7 @@ namespace HappyBusProject.Repositories
             {
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
 
-                DriverViewModel[] result = new DriverViewModel[drivers.Count];
+                var result = new DriverViewModel[drivers.Count];
 
                 for (int i = 0; i < result.Length; i++)
                 {

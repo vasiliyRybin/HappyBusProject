@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.HappyBusProject.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
 {
@@ -12,69 +16,39 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly MyShuttleBusAppNewDBContext _context;
-        private readonly IMapper _mapper;
-        public OrdersController(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext, IMapper mapper)
+        private readonly IOrderRepository<IActionResult> _repository;
+        public OrdersController(IOrderRepository<IActionResult> repository)
         {
-            _context = myShuttleBusAppNewDBContext;
-            _mapper = mapper;
+            _repository = repository;
         }
 
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new ObjectResult(await _repository.GetAllOrders());
         }
 
         
         [HttpGet("{id}")]
-        public string Get(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Get(string FullName)
         {
-            return "value";
+            return new ObjectResult(await _repository.GetLastOrder(FullName));
         }
 
 
         [HttpPost]
-        public string Post([FromBody]OrderInputModel orderInput)
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Post([FromBody]OrderInputModel orderInput)
         {
-            var freeCars = _context.Cars.Where(c => c.IsBusyNow != true).ToArray();
-            var randomCar = new Random().Next(0, freeCars.Length - 1);
-            var carIDReadyToOrder = freeCars[randomCar].Id;
-            var whoOrdered = _context.Users.First(u => u.FullName == orderInput.FullName).Id;
-            var startPointKM = _context.RouteStops.First(c => c.Name == orderInput.StartPoint).RouteLengthKM;
-            var endPointKM = _context.RouteStops.First(c => c.Name == orderInput.EndPoint).RouteLengthKM;
-            double totalPrice = Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * 0.065 : (endPointKM - startPointKM) * 0.065);
-
-            try
-            {
-                var order = _mapper.Map<Order>(orderInput);
-                
-                //Order order = new()
-                //{
-                //    CarId = carIDReadyToOrder,
-                //    CustomerId = whoOrdered,
-                //    Id = Guid.NewGuid(),
-                //    OrderDateTime = DateTime.Now,
-                //    OrderType = string.IsNullOrWhiteSpace(orderInput.OrderType) ? "MobileApp" : orderInput.OrderType,
-                //    StartPointId = _context.RouteStops.First(c => c.Name == orderInput.StartPoint).PointId,
-                //    EndPointId = _context.RouteStops.First(c => c.Name == orderInput.EndPoint).PointId,
-                //    TotalPrice = totalPrice
-                //};
-
-                _context.Orders.Add(order);
-                _context.SaveChanges();
-                return $"Order successfully created. Total price is { totalPrice } ";
-            }
-            catch (Exception e)
-            {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "POST Method");
-                return e.Message;
-            }
+            return new ObjectResult(await _repository.CreateOrder(orderInput));
         }
 
         
         [HttpPut("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public void Put(int id, string value)
         {
 
@@ -82,6 +56,7 @@ namespace HappyBusProject.Controllers
 
         
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public void Delete(int id)
         {
 

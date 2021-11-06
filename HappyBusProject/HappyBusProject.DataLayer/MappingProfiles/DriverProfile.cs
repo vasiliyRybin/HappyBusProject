@@ -14,11 +14,10 @@ namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.CarAge))
                 .ForMember(dest => dest.SeatsNum, opt => opt.MapFrom(src => src.SeatsNum))
                 .ForMember(dest => dest.RegistrationNumPlate, opt => opt.MapFrom(src => src.RegistrationNumPlate))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                .ForMember(dest => dest.IsBusyNow, opt => opt.MapFrom(src => 0));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
             //CreateMap<DriverCarInputModel, Driver>()
             //    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => Guid.NewGuid()))
-            //    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => Guid.NewGuid()))
+            //    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => Guid.NewGuid()));
         }
     }
 }
