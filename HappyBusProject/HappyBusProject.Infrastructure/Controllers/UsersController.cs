@@ -11,9 +11,9 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<UsersViewModel[], UsersViewModel> _repository;
+        private readonly IUsersRepository<IActionResult> _repository;
 
-        public UsersController(IUsersRepository<UsersViewModel[], UsersViewModel> usersRepository)
+        public UsersController(IUsersRepository<IActionResult> usersRepository)
         {
             _repository = usersRepository;
         }
@@ -34,7 +34,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
-        public async Task<ActionResult<UsersViewModel>> Post([FromQuery] UserInputModel userInput)
+        public async Task<IActionResult> Post([FromQuery] UserInputModel userInput)
         {
             UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
 

@@ -13,8 +13,8 @@ namespace HappyBusProject.Extensions
     {
         public static void AddTransientScopedSingletonEntities(this IServiceCollection services)
         {
-            services.AddTransient<IDriversRepository<DriverViewModel[], DriverViewModel>, DriversRepository>();
-            services.AddTransient<IUsersRepository<UsersViewModel[], UsersViewModel>, UsersRepository>();
+            services.AddTransient<IDriversRepository<IActionResult>, DriversRepository>();
+            services.AddTransient<IUsersRepository<IActionResult>, UsersRepository>();
             services.AddTransient<IOrderRepository<IActionResult>, OrdersRepository>();
         }
 

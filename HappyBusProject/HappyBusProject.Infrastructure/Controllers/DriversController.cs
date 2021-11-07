@@ -14,10 +14,10 @@ namespace HappyBusProject.Controllers
     [Route("AppAPI/Drivers")]
     public class DriversController : ControllerBase
     {
-        private readonly IDriversRepository<DriverViewModel[], DriverViewModel> _repository;
+        private readonly IDriversRepository<IActionResult> _repository;
         //private Guid UserID => Guid.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-        public DriversController(IDriversRepository<DriverViewModel[], DriverViewModel> driversRepository)
+        public DriversController(IDriversRepository<IActionResult> driversRepository)
         {
             _repository = driversRepository;
         }

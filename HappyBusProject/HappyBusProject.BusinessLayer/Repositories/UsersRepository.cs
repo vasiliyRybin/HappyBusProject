@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class UsersRepository : IUsersRepository<UsersViewModel[], UsersViewModel>
+    public class UsersRepository : IUsersRepository<IActionResult>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace HappyBusProject.Repositories
             _mapper = mapper;
         }
 
-        public async Task<ActionResult<UsersViewModel>> CreateAsync(UserInputModel usersInfo)
+        public async Task<IActionResult> CreateAsync(UserInputModel usersInfo)
         {
             var check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
 
@@ -69,19 +69,24 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<UsersViewModel[]>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
                 var users = await _context.Users.ToListAsync();
-                UsersViewModel[] result = new UsersViewModel[users.Count];
 
-                for (int i = 0; i < result.Length; i++)
+                if (users.Count != 0 && users != null)
                 {
-                    result[i] = _mapper.Map<UsersViewModel>(users[i]);
+                    UsersViewModel[] result = new UsersViewModel[users.Count];
+                    for (int i = 0; i < result.Length; i++)
+                    {
+                        result[i] = _mapper.Map<UsersViewModel>(users[i]);
+                    }
+
+                    return new OkObjectResult(result);
                 }
 
-                return result;
+                return new NoContentResult();                
             }
             catch (Exception e)
             {
@@ -90,7 +95,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<UsersViewModel>> GetByNameAsync(string value)
+        public async Task<IActionResult> GetByNameAsync(string value)
         {
             try
             {
@@ -99,9 +104,10 @@ namespace HappyBusProject.Repositories
                 {
                     var userResult = _mapper.Map<UsersViewModel>(user);
 
-                    return userResult;
+                    return new OkObjectResult(userResult);
                 }
-                else return new NotFoundResult();
+
+                return new NotFoundResult();
             }
             catch (Exception e)
             {

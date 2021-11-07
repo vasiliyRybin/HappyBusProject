@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.Interfaces
 {
-    public interface IOrderRepository<T> where T : IActionResult
+    public interface IOrderRepository<T> 
+        where T : IActionResult
     {
         Task<IActionResult> GetAllOrders();
         Task<T> GetLastOrder(string FullName);

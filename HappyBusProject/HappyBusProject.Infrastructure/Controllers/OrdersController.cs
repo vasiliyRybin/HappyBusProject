@@ -31,7 +31,7 @@ namespace HappyBusProject.Controllers
         }
 
         
-        [HttpGet("{id}")]
+        [HttpGet("{FullName}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string FullName)
         {
@@ -47,7 +47,7 @@ namespace HappyBusProject.Controllers
         }
 
         
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "User, Admin")]
         public void Put(int id, string value)
         {
@@ -55,7 +55,7 @@ namespace HappyBusProject.Controllers
         }
 
         
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize(Roles = "User, Admin")]
         public void Delete(int id)
         {

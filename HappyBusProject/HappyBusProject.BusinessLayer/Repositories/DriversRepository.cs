@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class DriversRepository : IDriversRepository<DriverViewModel[], DriverViewModel>
+    public class DriversRepository : IDriversRepository<IActionResult>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
         public DriversRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
         {
-            _context = myShuttleBusAppNewDBContext;
+            _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
         }
 
-        public async Task<ActionResult<DriverViewModel>> CreateAsync(DriverCarInputModel driverCar)
+        public async Task<IActionResult> CreateAsync(DriverCarInputModel driverCar)
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
             if (!isNotValid) return new BadRequestResult();
@@ -91,20 +91,25 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<DriverViewModel[]>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
 
-                var result = new DriverViewModel[drivers.Count];
-
-                for (int i = 0; i < result.Length; i++)
+                if (drivers.Count != 0 && drivers != null)
                 {
-                    result[i] = new DriverViewModel { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                    var result = new DriverViewModel[drivers.Count];
+
+                    for (int i = 0; i < result.Length; i++)
+                    {
+                        result[i] = new DriverViewModel { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                    }
+
+                    return new OkObjectResult(result);
                 }
 
-                return result;
+                return new NoContentResult();
             }
             catch (Exception e)
             {
@@ -113,7 +118,7 @@ namespace HappyBusProject.Repositories
             }
         }
 
-        public async Task<ActionResult<DriverViewModel>> GetByNameAsync(string name)
+        public async Task<IActionResult> GetByNameAsync(string name)
         {
             try
             {
@@ -122,7 +127,7 @@ namespace HappyBusProject.Repositories
                                                     (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
                                                     .ToListAsync();
 
-                if (drivers.Count != 0)
+                if (drivers.Count != 0 && drivers != null)
                 {
                     var driver = new DriverViewModel()
                     {
@@ -132,7 +137,7 @@ namespace HappyBusProject.Repositories
                         Rating = drivers[0].Rating
                     };
 
-                    return driver;
+                    return new OkObjectResult(driver);
                 }
 
                 return new NotFoundResult();
