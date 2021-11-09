@@ -29,7 +29,8 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
             if (orders.Count != 0)
             {
-                return new OkObjectResult(orders);
+                var result = _mapper.Map<OrderViewModel>(orders);
+                return new OkObjectResult(result);
             }
 
             return new NoContentResult();
@@ -37,12 +38,13 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         public async Task<IActionResult> GetByNameAsync(string FullName)
         {
-            var customer = _repository.Users.FirstOrDefault(u => u.FullName == FullName);
+            var customer = await _repository.Users.FirstOrDefaultAsync(u => u.FullName == FullName);
+
             if (customer != null)
             {
-                var customerID = customer.Id;
-                var order = await _repository.Orders.Where(o => o.CustomerId == customerID).OrderByDescending(d => d.OrderDateTime).FirstAsync();
-                return new ObjectResult(order);
+                var order = _repository.Orders.FirstOrDefault(c => c.CustomerId == customer.Id);
+                var result = _mapper.Map<OrderViewModel>(order);
+                return new OkObjectResult(result);
             }
 
             return new NotFoundResult();
@@ -50,11 +52,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         public async Task<IActionResult> CreateOrder(OrderInputModel orderInput)
         {
-            var checkDateTime = DateTime.TryParse(orderInput.DesiredDepartureTime, out DateTime DesiredDepartureTime);
-
-            if (!checkDateTime) return new BadRequestObjectResult("Incorrect DateTime format");
-
-            RetrieveDataForCreatingOrder(orderInput, DesiredDepartureTime, out Guid carIDReadyToOrder, out Guid whoOrdered, out RouteStop startPoint, out RouteStop endPoint, out int availableSeatsNum);
+            RetrieveDataForCreatingOrder(orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out RouteStop startPoint, out RouteStop endPoint, out int availableSeatsNum);
             var check = OrderInputValidation.OrderValuesValidation(orderInput, whoOrdered, startPoint, endPoint, out string errorMessage);
             
             if (check)
@@ -68,7 +66,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                 try
                 {
                     var order = _mapper.Map<Order>(orderInput);
-                    AssignValuesToOrder(order, startPoint, endPoint, carIDReadyToOrder, whoOrdered, orderInput, DesiredDepartureTime);
+                    AssignValuesToOrder(order, startPoint, endPoint, carIDReadyToOrder, whoOrdered, orderInput);
 
                     var view = _mapper.Map<OrderViewModel>(order);
                     _mapper.Map(orderInput, view);
@@ -95,25 +93,12 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         public void DeleteOrder(string FullName)
         {
-            
+
         }
 
-        private void AssignValuesToOrder(Order order, RouteStop startPoint, RouteStop endPoint, Guid carIDReadyToOrder, Guid whoOrdered, OrderInputModel orderInput, DateTime DesiredDepartureTime)
+        private void RetrieveDataForCreatingOrder(OrderInputModel orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out RouteStop startPoint, out RouteStop endPoint, out int availableSeatsNum)
         {
-            order.StartPointId = startPoint.PointId;
-            order.EndPointId = endPoint.PointId;
-            order.CarId = carIDReadyToOrder;
-            order.CustomerId = whoOrdered;
-            order.Id = Guid.NewGuid();
-            order.OrderDateTime = DateTime.Now;
-            order.OrderType = orderInput.OrderType.ToString();
-            order.IsActual = true;
-            order.DesiredDepartureTime = DesiredDepartureTime;
-        }
-
-        private void RetrieveDataForCreatingOrder(OrderInputModel orderInput, DateTime DesiredDepartureTime, out Guid carIDReadyToOrder, out Guid whoOrdered, out RouteStop startPoint, out RouteStop endPoint, out int availableSeatsNum)
-        {
-            var carID = GetDriver(DesiredDepartureTime);
+            var carID = GetDriver(orderInput.DesiredDepartureTime);
             if (carID != Guid.Empty)
             {
                 availableSeatsNum = _repository.CarCurrentStates.FirstOrDefault(c => c.Id == carID).FreeSeatsNum;
@@ -121,6 +106,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                 startPoint = _repository.RouteStops.FirstOrDefault(c => c.Name == orderInput.StartPoint);
                 endPoint = _repository.RouteStops.FirstOrDefault(c => c.Name == orderInput.EndPoint);
                 carIDReadyToOrder = carID;
+                return;
             }
 
             availableSeatsNum = default;
@@ -132,13 +118,26 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         private Guid GetDriver(DateTime desiredDepartureDateTime)
         {
-            var freeCar = _repository.CarCurrentStates.FirstOrDefault(c => c.DepartureTime == desiredDepartureDateTime);
+            var freeCar = _repository.CarCurrentStates.FirstOrDefault(c => c.DepartureTime.Equals(desiredDepartureDateTime));
 
             if (freeCar != null)
             {
                 return freeCar.Id;
             }
             return Guid.Empty;
+        }
+
+        private static void AssignValuesToOrder(Order order, RouteStop startPoint, RouteStop endPoint, Guid carIDReadyToOrder, Guid whoOrdered, OrderInputModel orderInput)
+        {
+            order.StartPointId = startPoint.PointId;
+            order.EndPointId = endPoint.PointId;
+            order.CarId = carIDReadyToOrder;
+            order.CustomerId = whoOrdered;
+            order.Id = Guid.NewGuid();
+            order.OrderDateTime = DateTime.Now;
+            order.OrderType = orderInput.OrderType.ToString();
+            order.IsActual = true;
+            order.DesiredDepartureTime = orderInput.DesiredDepartureTime;
         }
     }
 }

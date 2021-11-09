@@ -29,7 +29,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputModels
         [Required]
         public int OrderSeatsNum { get; set; }
         [Required]
-        public string DesiredDepartureTime { get; set; }
+        public DateTime DesiredDepartureTime { get; set; }
         [Required]
         public OrderType OrderType { get; set; }
     }
