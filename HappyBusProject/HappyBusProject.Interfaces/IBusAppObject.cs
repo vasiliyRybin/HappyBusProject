@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Interfaces
 {
-    public interface IObject<T>
+    public interface IBusAppObject<T>
         where T : IActionResult
     {
         Task<T> GetAllAsync();

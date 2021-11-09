@@ -10,10 +10,12 @@ namespace HappyBusProject
         public Guid CarId { get; set; }
         public Guid CustomerId { get; set; }
         public DateTime OrderDateTime { get; set; }
+        public DateTime DesiredDepartureTime { get; set; }
         public string OrderType { get; set; }
         public int StartPointId { get; set; }
         public int EndPointId { get; set; }
         public double TotalPrice { get; set; }
+        public bool IsActual { get; set; }
 
         public virtual Car Car { get; set; }
         public virtual User Customer { get; set; }

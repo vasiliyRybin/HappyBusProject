@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public interface IDriversRepository<T> : IObject<T>
+    public interface IDriversRepository<T> : IBusAppObject<T>
         where T : IActionResult
     {
         Task<T> CreateAsync(DriverCarInputModel driverInfo);

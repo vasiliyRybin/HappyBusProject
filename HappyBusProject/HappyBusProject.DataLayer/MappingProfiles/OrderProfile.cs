@@ -14,6 +14,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
         {
             CreateMap<OrderInputModel, Order>();
             CreateMap<OrderInputModel, OrderViewModel>();
+            CreateMap<Order, OrderViewModel>();
         }
     }
 }

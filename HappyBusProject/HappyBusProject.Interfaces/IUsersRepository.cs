@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public interface IUsersRepository<T> : IObject<T>
+    public interface IUsersRepository<T> : IBusAppObject<T>
         where T : IActionResult
     {
         Task<T> CreateAsync(UserInputModel usersInfo);

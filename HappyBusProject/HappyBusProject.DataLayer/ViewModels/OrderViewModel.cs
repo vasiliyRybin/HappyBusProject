@@ -8,8 +8,9 @@ namespace HappyBusProject.HappyBusProject.DataLayer.ViewModels
     public class OrderViewModel
     {
         public DateTime OrderDateTime { get; set; }
-        public int StartPoint { get; set; }
-        public int EndPoint { get; set; }
+        public string StartPoint { get; set; }
+        public string EndPoint { get; set; }
+        public DateTime DepartureTime { get; set; }
         public double TotalPrice { get; set; }
     }
 }

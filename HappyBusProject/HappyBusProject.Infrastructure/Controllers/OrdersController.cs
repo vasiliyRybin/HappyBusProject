@@ -27,7 +27,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return new ObjectResult(await _repository.GetAllOrders());
+            return new ObjectResult(await _repository.GetAllAsync());
         }
 
         
@@ -35,7 +35,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string FullName)
         {
-            return new ObjectResult(await _repository.GetLastOrder(FullName));
+            return new ObjectResult(await _repository.GetByNameAsync(FullName));
         }
 
 

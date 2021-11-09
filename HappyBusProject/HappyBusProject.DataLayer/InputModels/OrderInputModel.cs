@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.DataLayer.InputModels
 {
+    /// <summary>
+    /// Order types is:
+    /// 1 is for MobileApp
+    /// 2 is for Site
+    /// </summary>
+    public enum OrderType
+    {
+        Test = 1,
+        MobileApp,
+        Site
+    }
+
     public class OrderInputModel
     {
         [Required]
@@ -14,6 +26,11 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputModels
         public string StartPoint { get; set; }
         [Required]
         public string EndPoint { get; set; }
-        public string OrderType { get; set; }
+        [Required]
+        public int OrderSeatsNum { get; set; }
+        [Required]
+        public string DesiredDepartureTime { get; set; }
+        [Required]
+        public OrderType OrderType { get; set; }
     }
 }

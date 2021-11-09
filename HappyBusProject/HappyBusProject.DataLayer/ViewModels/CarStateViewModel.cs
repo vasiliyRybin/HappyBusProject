@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.Models
+namespace HappyBusProject.HappyBusProject.DataLayer.ViewModels
 {
-    public class CarsCurrentState
+    public class CarStateViewModel
     {
-        public Guid Id { get; set; }
+        public string DriverName { get; set; }
+        public string CarBrand { get; set; }
         public bool IsBusyNow { get; set; }
         public int SeatsNum { get; set; }
         public int FreeSeatsNum { get; set; }
-        public DateTime DepartureTime { get; set; }
     }
 }
