@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
 using HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,7 +13,7 @@ namespace HappyBusProject.HappyBusProject.Interfaces
         where T : IActionResult
     {
         Task<T> CreateOrder(OrderInputModel orderInput);
-        public void UpdateOrder(string FullName);
+        public void UpdateOrder(OrdersInputModelPutMethod putModel);
         public void DeleteOrder(string FullName);
     }
 }

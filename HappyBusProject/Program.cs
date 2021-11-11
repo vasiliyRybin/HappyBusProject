@@ -1,3 +1,4 @@
+using HibernatingRhinos.Profiler.Appender.EntityFramework;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -7,6 +8,9 @@ namespace HappyBusProject
     {
         public static void Main(string[] args)
         {
+            EntityFrameworkProfilerBootstrapper.PreStart();
+            EntityFrameworkProfiler.Initialize();
+
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -17,3 +21,4 @@ namespace HappyBusProject
                 );
     }
 }
+

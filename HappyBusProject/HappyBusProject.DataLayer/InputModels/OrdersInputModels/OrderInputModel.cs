@@ -13,8 +13,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputModels
     /// </summary>
     public enum OrderType
     {
-        Test = 1,
-        MobileApp,
+        MobileApp = 1,
         Site
     }
 

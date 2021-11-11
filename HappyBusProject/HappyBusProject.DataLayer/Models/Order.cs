@@ -14,6 +14,7 @@ namespace HappyBusProject
         public string OrderType { get; set; }
         public int StartPointId { get; set; }
         public int EndPointId { get; set; }
+        public int OrderSeatsNum { get; set; }
         public double TotalPrice { get; set; }
         public bool IsActual { get; set; }
 

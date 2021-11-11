@@ -4,14 +4,16 @@ using HappyBusProject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
     [DbContext(typeof(MyShuttleBusAppNewDBContext))]
-    partial class MyShuttleBusAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211111083645_some_new_migration")]
+    partial class some_new_migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +171,6 @@ namespace HappyBusProject.Migrations
 
                     b.Property<DateTime>("OrderDateTime")
                         .HasColumnType("datetime");
-
-                    b.Property<int>("OrderSeatsNum")
-                        .HasColumnType("int");
 
                     b.Property<string>("OrderType")
                         .IsRequired()

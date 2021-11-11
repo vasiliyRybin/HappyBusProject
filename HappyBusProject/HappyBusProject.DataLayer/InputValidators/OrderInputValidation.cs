@@ -8,9 +8,13 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputValidators
 {
     public static class OrderInputValidation
     {
-        public static bool OrderValuesValidation(OrderInputModel orderInput, Guid CustomerGUID, RouteStop startPoint, RouteStop endPoint, out string errorMessage)
+        public static bool OrderValuesValidation(MyShuttleBusAppNewDBContext _repository, OrderInputModel orderInput, out string errorMessage)
         {
-            if (CustomerGUID == Guid.Empty)
+            var CustomerGUID = _repository.Users.FirstOrDefault(u => u.FullName == orderInput.FullName);
+            var startPoint = _repository.RouteStops.FirstOrDefault(r => r.Name == orderInput.StartPoint);
+            var endPoint = _repository.RouteStops.FirstOrDefault(r => r.Name == orderInput.EndPoint);
+
+            if (CustomerGUID is null)
             {
                 errorMessage = "Customer not found";
                 return false;

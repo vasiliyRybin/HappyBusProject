@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
 using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
             CreateMap<OrderInputModel, Order>();
             CreateMap<OrderInputModel, OrderViewModel>();
             CreateMap<Order, OrderViewModel>();
+            CreateMap<OrdersInputModelPutMethod, Order>();
         }
     }
 }

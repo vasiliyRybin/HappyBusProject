@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
 using HappyBusProject.HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,10 +49,10 @@ namespace HappyBusProject.Controllers
 
         
         [HttpPut]
-        [Authorize(Roles = "User, Admin")]
-        public void Put(int id, string value)
+        [Authorize(Roles = "Admin")]
+        public void Put(OrdersInputModelPutMethod putMethod)
         {
-
+            _repository.UpdateOrder(putMethod);
         }
 
         
