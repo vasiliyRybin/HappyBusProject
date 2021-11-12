@@ -33,7 +33,7 @@ namespace HappyBusProject.Controllers
 
         
         [HttpGet("{FullName}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Get(string FullName)
         {
             return new ObjectResult(await _repository.GetByNameAsync(FullName));
@@ -42,7 +42,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Post([FromBody]OrderInputModel orderInput)
+        public async Task<IActionResult> Post([FromBody] OrderInputModel orderInput)
         {
             return new ObjectResult(await _repository.CreateOrder(orderInput));
         }
@@ -50,17 +50,17 @@ namespace HappyBusProject.Controllers
         
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public void Put(OrdersInputModelPutMethod putMethod)
+        public void Put(OrderInputModelPutMethod putMethod)
         {
             _repository.UpdateOrder(putMethod);
         }
 
         
         [HttpDelete]
-        [Authorize(Roles = "User, Admin")]
-        public void Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public void Delete(string FullName)
         {
-
+            _repository.DeleteOrder(FullName);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace HappyBusProject.HappyBusProject.Interfaces
     public interface IOrderRepository<T> : IBusAppObject<T>
         where T : IActionResult
     {
-        Task<T> CreateOrder(OrderInputModel orderInput);
-        public void UpdateOrder(OrdersInputModelPutMethod putModel);
+        Task<T> CreateOrder(DataLayer.InputModels.OrderInputModel orderInput);
+        public void UpdateOrder(DataLayer.InputModels.OrdersInputModels.OrderInputModelPutMethod putModel);
         public void DeleteOrder(string FullName);
     }
 }

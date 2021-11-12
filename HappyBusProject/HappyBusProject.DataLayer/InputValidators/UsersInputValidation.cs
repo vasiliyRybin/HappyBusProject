@@ -35,6 +35,7 @@ namespace HappyBusProject
                     return false;
                 }
             if (usersInfo.PhoneNumber.StartsWith("80")) usersInfo.PhoneNumber = "375" + usersInfo.PhoneNumber[2..];
+            if (usersInfo.PhoneNumber.StartsWith("+375")) usersInfo.PhoneNumber = usersInfo.PhoneNumber[1..];
 
             errorMessage = string.Empty;
             return true;

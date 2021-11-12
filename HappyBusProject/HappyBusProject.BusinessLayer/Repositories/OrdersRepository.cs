@@ -31,22 +31,41 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
             if (orders.Count != 0)
             {
-                var result = _mapper.Map<OrderViewModel>(orders);
+                var result = new OrderViewModel[orders.Count];
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = _mapper.Map<OrderViewModel>(orders[i]);
+                    result[i].StartPoint = GetPointName(_repository, orders[i].StartPointId);
+                    result[i].EndPoint = GetPointName(_repository, orders[i].EndPointId);
+                }
+
                 return new OkObjectResult(result);
             }
 
             return new NoContentResult();
         }
 
+
+        /// <summary>
+        /// Get last order by input name
+        /// </summary>
+        /// <param name="FullName"></param>
+        /// <returns></returns>
         public async Task<IActionResult> GetByNameAsync(string FullName)
         {
             var customer = await _repository.Users.FirstOrDefaultAsync(u => u.FullName == FullName);
 
             if (customer != null)
             {
-                var order = _repository.Orders.FirstOrDefault(c => c.CustomerId == customer.Id);
-                var result = _mapper.Map<OrderViewModel>(order);
-                return new OkObjectResult(result);
+                var order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).FirstOrDefault(c => c.CustomerId == customer.Id);
+                if (order != null)
+                {
+                    var result = _mapper.Map<OrderViewModel>(order);
+                    result.StartPoint = GetPointName(_repository, order.StartPointId);
+                    result.EndPoint = GetPointName(_repository, order.EndPointId);
+                    return new OkObjectResult(result);
+                }
             }
 
             return new NotFoundResult();
@@ -56,19 +75,18 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         {            
             var check = OrderInputValidation.OrderValuesValidation(_repository, orderInput, out string errorMessage);
 
-            RetrieveDataForCreatingOrder(orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum);
-
             if (check)
             {
+                RetrieveDataForCreatingOrder(orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum);
                 if (availableSeatsNum < orderInput.OrderSeatsNum) return new BadRequestObjectResult("Attempt to order more seats than available");
                 var startPointKM = GetLengthKM(_repository, orderInput.StartPoint);
                 var endPointKM = GetLengthKM(_repository, orderInput.EndPoint);
 
-                double totalPrice = Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * 0.065 : (endPointKM - startPointKM) * 0.065);
-
                 try
                 {
                     var order = _mapper.Map<Order>(orderInput);
+                    double totalPrice = CountTotalPrice(startPointKM, endPointKM, order.OrderSeatsNum);
+
                     AssignValuesToOrder(order, _repository, carIDReadyToOrder, whoOrdered, orderInput, totalPrice);
 
                     var view = _mapper.Map<OrderViewModel>(order);
@@ -95,13 +113,24 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         /// This method updates last active user's order
         /// </summary>
         /// <param name="FullName"></param>
-        public void UpdateOrder(OrdersInputModelPutMethod putModel)
+        public void UpdateOrder(OrderInputModelPutMethod putModel)
         {
             var user = _repository.Users.FirstOrDefault(u => u.FullName == putModel.FullName);
+            var check = OrderInputValidation.OrderValuesValidation(_repository, (OrderInputModel)putModel, out string _);
 
-            if (user != null)
+            if (user != null && check)
             {
-                PutMethodMyMapper(_repository, putModel, user);
+                Order order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
+                PutMethodMyMapper(_repository, putModel, order, user, out bool isPointModified);
+                
+                if (isPointModified)
+                {
+                    var startPointKM = GetLengthKM(_repository, order.StartPointId);
+                    var endPointKM = GetLengthKM(_repository, order.EndPointId);
+                    order.TotalPrice = CountTotalPrice(startPointKM, endPointKM, order.OrderSeatsNum);
+                }
+
+                _repository.SaveChanges();
             }
         }
 
@@ -111,12 +140,23 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         /// <param name="FullName"></param>
         public void DeleteOrder(string FullName)
         {
+            var user = _repository.Users.FirstOrDefault(u => u.FullName == FullName);
 
+            if (user != null)
+            {
+                Order order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
+
+                if (order != null)
+                {
+                    _repository.Remove(order);
+                    _repository.SaveChanges();
+                }
+            }            
         }
 
         #region RetrieveDataForCreatingOrder
 
-        private void RetrieveDataForCreatingOrder(OrderInputModel orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum)
+        private void RetrieveDataForCreatingOrder(DataLayer.InputModels.OrderInputModel orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum)
         {
             var carID = GetDriver(orderInput.DesiredDepartureTime);
             if (carID != Guid.Empty)
@@ -132,21 +172,10 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             carIDReadyToOrder = carID;
         }
 
-        private Guid GetDriver(DateTime desiredDepartureDateTime)
-        {
-            var freeCar = _repository.CarCurrentStates.FirstOrDefault(c => c.DepartureTime.Equals(desiredDepartureDateTime));
-
-            if (freeCar != null)
-            {
-                return freeCar.Id;
-            }
-            return Guid.Empty;
-        }
-
         #endregion
 
         #region AssignValuesToOrder
-        private static void AssignValuesToOrder(Order order, MyShuttleBusAppNewDBContext _repository, Guid carIDReadyToOrder, Guid whoOrdered, OrderInputModel orderInput, double totalPrice)
+        private static void AssignValuesToOrder(Order order, MyShuttleBusAppNewDBContext _repository, Guid carIDReadyToOrder, Guid whoOrdered, DataLayer.InputModels.OrderInputModel orderInput, double totalPrice)
         {
             order.StartPointId = GetPointID(_repository, orderInput.StartPoint);
             order.EndPointId = GetPointID(_repository, orderInput.EndPoint);
@@ -161,37 +190,42 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         #endregion
 
-        #region MyMapper
+        #region PutMethodMyMapper
 
-        private static void PutMethodMyMapper(MyShuttleBusAppNewDBContext _repository, OrdersInputModelPutMethod putModel, User user)
-        {
-            Order order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
+        private static void PutMethodMyMapper(MyShuttleBusAppNewDBContext _repository, OrderInputModelPutMethod putModel, Order order, User user, out bool isPointsModified)
+        {            
             var inputPropertiesArr = putModel.GetType().GetProperties();
+            isPointsModified = false;
 
             try
             {
                 foreach (var item in inputPropertiesArr)
                 {
                     var PropertyName = item.Name;
-                    if (PropertyName == nameof(putModel.FullName)) continue;
-                    var fieldValue = item.GetValue(putModel);
-                    if (fieldValue is null || string.IsNullOrWhiteSpace(fieldValue.ToString())) continue;
-                    if(order is null) order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
-
-                    if (PropertyName.Contains("Point"))
+                    if (PropertyName != nameof(putModel.FullName))
                     {
-                        var pointID = GetPointID(_repository, fieldValue.ToString());
-                        var pointProperty = order.GetType().GetProperty(PropertyName + "Id");
-                        pointProperty.SetValue(order, pointID);
-                        continue;
-                    }
+                        var fieldValue = item.GetValue(putModel);
+                        if (fieldValue is null || string.IsNullOrWhiteSpace(fieldValue.ToString())) continue;
+                        if (order is null) order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
 
-                    var property = order.GetType().GetProperty(PropertyName);
-                    property.SetValue(order, fieldValue);
+                        if (PropertyName.Contains("Point"))
+                        {
+                            var pointID = GetPointID(_repository, fieldValue.ToString());
+                            var pointProperty = order.GetType().GetProperty(PropertyName + "Id");
+                            var pointCurrentValue = (int)pointProperty.GetValue(order);
+                            if (pointCurrentValue != pointID && !isPointsModified) isPointsModified = true;
+
+                            pointProperty.SetValue(order, pointID);
+                            continue;
+                        }
+
+                        if (PropertyName == nameof(putModel.OrderType)) fieldValue = fieldValue.ToString();
+
+                        var property = order.GetType().GetProperty(PropertyName);
+                        property.SetValue(order, fieldValue);
+                    }
                 }
 
-                _repository.Update(order);
-                _repository.SaveChanges();
             }
             catch (Exception)
             {
@@ -202,6 +236,10 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         #endregion
 
+        private static string GetPointName(MyShuttleBusAppNewDBContext _repository, int id)
+        {
+            return _repository.RouteStops.FirstOrDefault(c => c.PointId == id).Name;
+        }
 
         private static int GetPointID(MyShuttleBusAppNewDBContext _repository, string pointName)
         {
@@ -211,6 +249,27 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         private static int GetLengthKM(MyShuttleBusAppNewDBContext _repository, string pointName)
         {
             return _repository.RouteStops.FirstOrDefault(c => c.Name == pointName).RouteLengthKM;
+        }
+
+        private static int GetLengthKM(MyShuttleBusAppNewDBContext _repository, int id)
+        {
+            return _repository.RouteStops.FirstOrDefault(c => c.PointId == id).RouteLengthKM;
+        }
+
+        private Guid GetDriver(DateTime desiredDepartureDateTime)
+        {
+            var freeCar = _repository.CarCurrentStates.FirstOrDefault(c => c.DepartureTime.Equals(desiredDepartureDateTime));
+
+            if (freeCar != null)
+            {
+                return freeCar.Id;
+            }
+            return Guid.Empty;
+        }
+
+        private static double CountTotalPrice(int startPointKM, int endPointKM, int OrderSeatsNum)
+        {
+            return Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * 0.065 * OrderSeatsNum : (endPointKM - startPointKM) * 0.065 * OrderSeatsNum);
         }
     }
 }

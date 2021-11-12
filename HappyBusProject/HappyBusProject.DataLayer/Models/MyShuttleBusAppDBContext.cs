@@ -103,7 +103,7 @@ namespace HappyBusProject
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasKey(e => new { e.CarId, e.CustomerId });
+                entity.HasKey(e => new { e.Id });
 
                 entity.Property(e => e.CarId).HasColumnName("CarID");
 

@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels
 {
-    public class OrdersInputModelPutMethod
+    /// <summary>
+    /// JUST FOR ORDERS PUT METHOD!!!
+    /// </summary>
+    public class OrderInputModelPutMethod
     {
         [Required]
         public string FullName { get; set; }
@@ -14,5 +17,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModel
         public string EndPoint { get; set; }
         public int OrderSeatsNum { get; set; }
         public DateTime DesiredDepartureTime { get; set; }
+        [Required]
+        public OrderType OrderType { get; set; }
     }
 }

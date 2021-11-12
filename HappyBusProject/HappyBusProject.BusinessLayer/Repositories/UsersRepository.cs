@@ -36,7 +36,7 @@ namespace HappyBusProject.Repositories
 
                 await _context.Users.AddAsync(user);
                 int successUpdate = _context.SaveChanges();
-                if (successUpdate > 0) return new OkObjectResult(user);
+                if (successUpdate > 0) return new OkObjectResult(_mapper.Map<UsersViewModel>(user));
                 return new NoContentResult();
             }
             catch (Exception e)

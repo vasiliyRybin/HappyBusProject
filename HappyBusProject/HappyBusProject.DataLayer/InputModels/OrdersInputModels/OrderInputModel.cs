@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -31,5 +32,17 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputModels
         public DateTime DesiredDepartureTime { get; set; }
         [Required]
         public OrderType OrderType { get; set; }
+
+        public static explicit operator OrderInputModel(OrderInputModelPutMethod v)
+        {
+            return new OrderInputModel()
+            {
+                DesiredDepartureTime = v.DesiredDepartureTime,
+                FullName = v.FullName,
+                StartPoint = v.StartPoint,
+                EndPoint = v.EndPoint,
+                OrderSeatsNum = v.OrderSeatsNum
+            };
+        }
     }
 }
