@@ -8,16 +8,7 @@ namespace HappyBusProject.InputValidators
     {
         public static bool IsEmptyInputValues(DriverCarInputModel driverCar)
         {
-            if (string.IsNullOrWhiteSpace(driverCar.CarBrand)
-                || string.IsNullOrWhiteSpace(driverCar.SeatsNum)
-                || string.IsNullOrWhiteSpace(driverCar.RegistrationNumPlate)
-                || string.IsNullOrWhiteSpace(driverCar.CarAge)
-               )
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(driverCar.DriverName) || string.IsNullOrWhiteSpace(driverCar.DriverAge))
+            if (string.IsNullOrWhiteSpace(driverCar.CarBrand) || string.IsNullOrWhiteSpace(driverCar.RegistrationNumPlate) || string.IsNullOrWhiteSpace(driverCar.DriverName))
             {
                 return false;
             }
@@ -37,63 +28,61 @@ namespace HappyBusProject.InputValidators
             return true;
         }
 
-        public static bool DriversInputValidator(DriverCarInputModel driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime dateTimeResult, out string errorMessage)
+        public static bool DriversInputValidator(DriverCarInputModel driverCar, out string errorMessage)
         {
             if (driverCar.CarBrand.Length > 30)
             {
                 errorMessage = "Invalid brand name";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
-            if (!int.TryParse(driverCar.SeatsNum, out numSeats) || numSeats <= 8 || numSeats > 50)
+            if (driverCar.SeatsNum <= 8 || driverCar.SeatsNum > 50)
             {
                 errorMessage = "Invalid number of seats or value too low";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
             if (driverCar.RegistrationNumPlate.Length > 9 || !new Regex(@"\d{4}\s\w{2}.\d{1}").IsMatch(driverCar.RegistrationNumPlate))
             {
                 errorMessage = "Invalid registration plate number";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
-            if (!int.TryParse(driverCar.CarAge, out carAgeInt) || carAgeInt < 0 || carAgeInt > 15)
+            if (driverCar.CarAge < 0 || driverCar.CarAge > 15)
             {
                 errorMessage = "Invalid car age or car age is too big";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
             if (driverCar.DriverName.Length > 50 || !new Regex(pattern: @"(^[a-zA-Z '-]{1,25})|(^[А-Яа-я '-]{1,25})").IsMatch(driverCar.DriverName))
             {
                 errorMessage = "Invalid name";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
-            if (!int.TryParse(driverCar.DriverAge, out driverAgeInt) || driverAgeInt < 21 || driverAgeInt > 65)
+            if (driverCar.DriverAge < 21 || driverCar.DriverAge > 65)
             {
                 errorMessage = "Invalid age.";
-                SetDefaultValues(out numSeats, out carAgeInt, out driverAgeInt, out dateTimeResult);
+                SetDefaultValues(driverCar);
                 return false;
             }
-            if (!DateTime.TryParse(driverCar.ExamPass, out DateTime resultExamPass))
+            if (driverCar.MedicalExamPassDate < DateTime.Parse("01.01.2020") || driverCar.MedicalExamPassDate > DateTime.Now)
             {
-                errorMessage = string.Empty;
-                dateTimeResult = DateTime.Parse("1900-01-01 00:00:00");
+                errorMessage = "Invalid ExamPass date";
+                SetDefaultValues(driverCar);
                 return false;
             }
-
 
             errorMessage = string.Empty;
-            dateTimeResult = resultExamPass;
             return true;
         }
 
-        private static void SetDefaultValues(out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime dateTimeResult)
+        private static void SetDefaultValues(DriverCarInputModel driverCar)
         {
-            numSeats = -1;
-            carAgeInt = -1;
-            driverAgeInt = -1;
-            dateTimeResult = DateTime.Parse("1900-01-01 00:00:00");
+            driverCar.SeatsNum = -1;
+            driverCar.SeatsNum = -1;
+            driverCar.DriverAge = -1;
+            driverCar.MedicalExamPassDate = DateTime.Parse("1900-01-01 00:00:00");
         }
     }
 }

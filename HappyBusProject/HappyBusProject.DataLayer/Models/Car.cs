@@ -13,11 +13,11 @@ namespace HappyBusProject
             Orders = new HashSet<Order>();
         }
 
-        public Guid Id { get; set; }
-        public string Brand { get; set; }
+        public Guid CarId { get; set; }
+        public string CarBrand { get; set; }
         public int SeatsNum { get; set; }
         public string RegistrationNumPlate { get; set; }
-        public int Age { get; set; }
+        public int CarAge { get; set; }
 
         public virtual ICollection<Driver> Drivers { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

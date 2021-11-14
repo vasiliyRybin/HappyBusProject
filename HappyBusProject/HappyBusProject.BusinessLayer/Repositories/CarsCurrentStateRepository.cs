@@ -29,16 +29,16 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                 (
                     Task.Run(() => 
                     _repository.Drivers
-                    .Join(_repository.Cars, d => d.CarId, c => c.Id,
+                    .Join(_repository.Cars, d => d.CarId, c => c.CarId,
                     (driver, car) => new { driver, car })
 
                     .Join(_repository.CarCurrentStates,
-                    joined => joined.car.Id,
+                    joined => joined.car.CarId,
                     carState => carState.Id,
                     (joined, carState) => new CarStateViewModel
                     {
-                        CarBrand = joined.car.Brand,
-                        DriverName = joined.driver.Name,
+                        CarBrand = joined.car.CarBrand,
+                        DriverName = joined.driver.DriverName,
                         SeatsNum = carState.FreeSeatsNum,
                         FreeSeatsNum = carState.FreeSeatsNum,
                         IsBusyNow = carState.IsBusyNow
@@ -64,17 +64,17 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             var currentState = await
                 (
                     Task.Run(() =>
-                    _repository.Drivers.Where(d => d.Name == name)
-                    .Join(_repository.Cars, d => d.CarId, c => c.Id,
+                    _repository.Drivers.Where(d => d.DriverName == name)
+                    .Join(_repository.Cars, d => d.CarId, c => c.CarId,
                     (driver, car) => new { driver, car })
 
                     .Join(_repository.CarCurrentStates,
-                    joined => joined.car.Id,
+                    joined => joined.car.CarId,
                     carState => carState.Id,
                     (joined, carState) => new CarStateViewModel
                     {
-                        CarBrand = joined.car.Brand,
-                        DriverName = joined.driver.Name,
+                        CarBrand = joined.car.CarBrand,
+                        DriverName = joined.driver.DriverName,
                         SeatsNum = carState.FreeSeatsNum,
                         FreeSeatsNum = carState.FreeSeatsNum,
                         IsBusyNow = carState.IsBusyNow

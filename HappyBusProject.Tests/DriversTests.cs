@@ -15,10 +15,10 @@ namespace HappyBusProject.Tests
         {
             var drivers = new List<DriverViewModel>
             {
-                new DriverViewModel{ Name = "Vitalii", Age = 28, Rating = 5.0},
-                new DriverViewModel{ Name = "Kate", Age = 25, Rating = 4.5},
-                new DriverViewModel{ Name = "Lehonti", Age = 27, Rating = 5.0},
-                new DriverViewModel{ Name = "Nikolai", Age = 45, Rating = 4.1}
+                new DriverViewModel{ DriverName = "Vitalii", DriverAge = 28, Rating = 5.0},
+                new DriverViewModel{ DriverName = "Kate", DriverAge = 25, Rating = 4.5},
+                new DriverViewModel{ DriverName = "Lehonti", DriverAge = 27, Rating = 5.0},
+                new DriverViewModel{ DriverName = "Nikolai", DriverAge = 45, Rating = 4.1}
             };
             return await Task.FromResult(drivers);
         }
@@ -27,15 +27,15 @@ namespace HappyBusProject.Tests
         {
             var _context = new List<DriverViewModel>();
 
-            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out errorMessage);
+            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out errorMessage);
             if (!isNotValid) return new DriverViewModel();
 
             try
             {
                 DriverViewModel driverInfo = new()
                 {
-                    Age = driverAgeInt,
-                    Name = driverCar.DriverName,
+                    DriverAge = driverCar.DriverAge,
+                    DriverName = driverCar.DriverName,
                     CarBrand = driverCar.CarBrand,
                     Rating = 5.0
                 };
@@ -68,11 +68,11 @@ namespace HappyBusProject.Tests
             var newDriver = new DriverCarInputModel()
             {
                 DriverName = "Grisha Pumpkin",
-                DriverAge = "85",
+                DriverAge = 85,
                 CarBrand = "Some Helicopter",
-                CarAge = "20",
-                SeatsNum = "21",
-                ExamPass = "1900-01-01",
+                CarAge = 20,
+                SeatsNum = 21,
+                MedicalExamPassDate = DateTime.Parse("1900-01-01"),
                 RegistrationNumPlate = "5544 PL-5"
             };
 

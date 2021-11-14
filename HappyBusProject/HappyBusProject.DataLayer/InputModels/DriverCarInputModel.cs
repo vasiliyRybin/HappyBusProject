@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace HappyBusProject.ModelsToReturn
 {
@@ -7,14 +8,14 @@ namespace HappyBusProject.ModelsToReturn
         [Required]
         public string DriverName { get; set; }
         [Required]
-        public string DriverAge { get; set; }
-        public string ExamPass { get; set; } = "1900-01-01";
+        public int DriverAge { get; set; }
+        public DateTime MedicalExamPassDate { get; set; } 
         [Required]
         public string CarBrand { get; set; }
         [Required]
-        public string CarAge { get; set; }
+        public int CarAge { get; set; }
         [Required]
-        public string SeatsNum { get; set; }
+        public int SeatsNum { get; set; }
         [Required]
         public string RegistrationNumPlate { get; set; }
     }

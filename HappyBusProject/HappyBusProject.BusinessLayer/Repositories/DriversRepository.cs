@@ -1,4 +1,6 @@
-﻿using HappyBusProject.InputValidators;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.Models;
+using HappyBusProject.InputValidators;
 using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,50 +13,36 @@ namespace HappyBusProject.Repositories
     public class DriversRepository : IDriversRepository<IActionResult>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
+        private readonly IMapper _mapper;
 
-        public DriversRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        public DriversRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext, IMapper mapper)
         {
             _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
+
 
         public async Task<IActionResult> CreateAsync(DriverCarInputModel driverCar)
         {
-            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out int numSeats, out int carAgeInt, out int driverAgeInt, out DateTime resultExamPass, out _);
+            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out _);
             if (!isNotValid) return new BadRequestResult();
 
             try
             {
-                var carGuid = Guid.NewGuid();
+                Car car = _mapper.Map<Car>(driverCar);
 
-                Car car = new()
-                {
-                    Id = carGuid,
-                    Brand = driverCar.CarBrand,
-                    SeatsNum = numSeats,
-                    RegistrationNumPlate = driverCar.RegistrationNumPlate,
-                    Age = carAgeInt
-                };
+                Driver driver = _mapper.Map<Driver>(driverCar);
+                driver.CarId = car.CarId;
 
-                Driver driver = new()
-                {
-                    Name = driverCar.DriverName,
-                    Age = driverAgeInt,
-                    Id = Guid.NewGuid(),
-                    CarId = carGuid,
-                    Rating = 5.0,
-                    MedicalExamPassDate = resultExamPass
-                };
+                DriverViewModel driverInfo = _mapper.Map<DriverViewModel>(driver);
+                _mapper.Map(car, driverInfo);
 
-                DriverViewModel driverInfo = new()
-                {
-                    Age = driver.Age,
-                    Name = driver.Name,
-                    CarBrand = car.Brand,
-                    Rating = driver.Rating
-                };
+                CarsCurrentState carsCurrent = _mapper.Map<CarsCurrentState>(car);
+                _mapper.Map(driverCar, carsCurrent);
 
                 await _context.Drivers.AddAsync(driver);
                 await _context.Cars.AddAsync(car);
+                await _context.CarCurrentStates.AddAsync(carsCurrent);
                 int successUpdate = await _context.SaveChangesAsync();
                 if (successUpdate > 0) return new OkObjectResult(driverInfo);
                 else return new NoContentResult();
@@ -71,8 +59,8 @@ namespace HappyBusProject.Repositories
         {
             try
             {
-                var driver = _context.Drivers.FirstOrDefault(c => c.Name.Contains(name));
-                var carToRemove = _context.Cars.FirstOrDefault(c => c.Id == driver.CarId);
+                var driver = _context.Drivers.FirstOrDefault(c => c.DriverName == name);
+                var carToRemove = _context.Cars.FirstOrDefault(c => c.CarId == driver.CarId);
 
                 if (driver != null && carToRemove != null)
                 {
@@ -86,7 +74,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
+                LogWriter.ErrorWriterToFile(e.Message + "\t" + "DELETE method, DriversRepository");
                 return new BadRequestObjectResult(e.Message);
             }
         }
@@ -95,7 +83,7 @@ namespace HappyBusProject.Repositories
         {
             try
             {
-                var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.Id, (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand }).ToListAsync();
+                var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.CarId, (d, c) => new { d.DriverName, d.DriverAge, d.Rating, c.CarBrand }).ToListAsync();
 
                 if (drivers.Count != 0 && drivers != null)
                 {
@@ -103,7 +91,7 @@ namespace HappyBusProject.Repositories
 
                     for (int i = 0; i < result.Length; i++)
                     {
-                        result[i] = new DriverViewModel { Name = drivers[i].Name, Age = drivers[i].Age, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
+                        result[i] = new DriverViewModel { DriverName = drivers[i].DriverName, DriverAge = drivers[i].DriverAge, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                     }
 
                     return new OkObjectResult(result);
@@ -113,7 +101,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
+                LogWriter.ErrorWriterToFile(e.Message + "\t" + "GET Method, DriversRepository");
                 return new BadRequestObjectResult(e.Message);
             }
         }
@@ -122,17 +110,17 @@ namespace HappyBusProject.Repositories
         {
             try
             {
-                var drivers = await _context.Drivers.Where(d => d.Name.Contains(name))
-                                                    .Join(_context.Cars, d => d.CarId, c => c.Id,
-                                                    (d, c) => new { d.Name, d.Age, d.Rating, CarBrand = c.Brand })
+                var drivers = await _context.Drivers.Where(d => d.DriverName == name)
+                                                    .Join(_context.Cars, d => d.CarId, c => c.CarId,
+                                                    (d, c) => new { d.DriverName, d.DriverAge, d.Rating, c.CarBrand })
                                                     .ToListAsync();
 
                 if (drivers.Count != 0 && drivers != null)
                 {
                     var driver = new DriverViewModel()
                     {
-                        Name = drivers[0].Name,
-                        Age = drivers[0].Age,
+                        DriverName = drivers[0].DriverName,
+                        DriverAge = drivers[0].DriverAge,
                         CarBrand = drivers[0].CarBrand,
                         Rating = drivers[0].Rating
                     };
@@ -144,7 +132,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
+                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method, DriversRepository");
                 return new BadRequestObjectResult(e.Message);
             }
         }
@@ -155,11 +143,11 @@ namespace HappyBusProject.Repositories
 
             try
             {
-                var driverCarID = _context.Drivers.FirstOrDefault(c => c.Name.Contains(driverCar.DriverName)).CarId;
-                var car = _context.Cars.FirstOrDefault(c => c.Id == driverCarID);
+                var driverCarID = _context.Drivers.FirstOrDefault(c => c.DriverName.Contains(driverCar.DriverName)).CarId;
+                var car = _context.Cars.FirstOrDefault(c => c.CarId == driverCarID);
                 if (car != null)
                 {
-                    car.Brand = driverCar.CarBrand;
+                    car.CarBrand = driverCar.CarBrand;
                     await _context.SaveChangesAsync();
                     return new OkResult();
                 }
@@ -168,7 +156,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
+                LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method, DriversRepository");
                 return new BadRequestObjectResult(e.Message);
             }
         }

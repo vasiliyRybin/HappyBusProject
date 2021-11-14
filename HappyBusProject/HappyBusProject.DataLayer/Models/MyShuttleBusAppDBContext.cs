@@ -31,11 +31,11 @@ namespace HappyBusProject
 
             modelBuilder.Entity<Car>(entity =>
             {
-                entity.Property(e => e.Id)
+                entity.Property(e => e.CarId)
                     .ValueGeneratedNever()
                     .HasColumnName("ID");
 
-                entity.Property(e => e.Brand)
+                entity.Property(e => e.CarBrand)
                     .IsRequired()
                     .HasMaxLength(50);
 
@@ -54,7 +54,7 @@ namespace HappyBusProject
 
                 entity.Property(e => e.MedicalExamPassDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Name)
+                entity.Property(e => e.DriverName)
                     .IsRequired()
                     .HasMaxLength(100);
 

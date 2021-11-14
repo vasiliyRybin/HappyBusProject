@@ -9,7 +9,7 @@ using System;
 
 namespace HappyBusProject.Extensions
 {
-    public static class ExtensionMethods
+    public static class StartupExtensionMethods
     {
         public static void AddTransientScopedSingletonEntities(this IServiceCollection services)
         {

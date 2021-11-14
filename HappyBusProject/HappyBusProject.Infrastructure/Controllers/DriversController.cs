@@ -38,7 +38,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Driver, Admin")]
-        public async Task<IActionResult> PostTest([FromQuery] DriverCarInputModel driverCar)
+        public async Task<IActionResult> PostTest([FromBody] DriverCarInputModel driverCar)
         {
             var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
             if (!isNotEmtpy) return new BadRequestResult();

@@ -4,14 +4,16 @@ using HappyBusProject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HappyBusProject.Migrations
 {
     [DbContext(typeof(MyShuttleBusAppNewDBContext))]
-    partial class MyShuttleBusAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211113155208_DriverCarTables_NewColumnNames")]
+    partial class DriverCarTables_NewColumnNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace HappyBusProject.Migrations
 
             modelBuilder.Entity("HappyBusProject.Car", b =>
                 {
-                    b.Property<Guid>("CarId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ID");
 
@@ -42,7 +44,7 @@ namespace HappyBusProject.Migrations
                     b.Property<int>("SeatsNum")
                         .HasColumnType("int");
 
-                    b.HasKey("CarId");
+                    b.HasKey("Id");
 
                     b.ToTable("Cars");
                 });
@@ -60,13 +62,13 @@ namespace HappyBusProject.Migrations
                     b.Property<int>("DriverAge")
                         .HasColumnType("int");
 
-                    b.Property<string>("DriverName")
+                    b.Property<DateTime?>("MedicalExamPassDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("MedicalExamPassDate")
-                        .HasColumnType("datetime");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
