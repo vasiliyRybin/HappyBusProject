@@ -23,10 +23,8 @@ namespace HappyBusProject.Tests
             return await Task.FromResult(drivers);
         }
 
-        private DriverViewModel CreateDriver(DriverCarInputModel driverCar, out string errorMessage)
+        private static DriverViewModel CreateDriver(DriverCarInputModel driverCar, out string errorMessage)
         {
-            var _context = new List<DriverViewModel>();
-
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out errorMessage);
             if (!isNotValid) return new DriverViewModel();
 
@@ -78,6 +76,21 @@ namespace HappyBusProject.Tests
 
             _ = CreateDriver(newDriver, out string errorMessage);
             Assert.NotEmpty(errorMessage);
+        }
+
+        [Fact]
+        public async Task DeleteDriver_DriverNotFoundAsync()
+        {
+            var driverToDelete = await GetTestDrivers();
+            var result = DeleteDriver(driverToDelete, " ");
+            Assert.False(result);
+        }
+
+        public static bool DeleteDriver(List<DriverViewModel> drivers, string FullName)
+        {
+            var driver = drivers.Find(c => c.DriverName == FullName);
+            if (driver != null) return true;
+            return false;
         }
     }
 }

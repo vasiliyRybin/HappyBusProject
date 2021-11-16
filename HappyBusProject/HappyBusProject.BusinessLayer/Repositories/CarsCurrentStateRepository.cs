@@ -85,7 +85,8 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             {
                 var currentState = await
                 (
-                    Task.Run(() =>
+                    Task.Run
+                    (() =>
                     _repository.Drivers
                     .Join(_repository.Cars, d => d.CarId, c => c.CarId,
                     (driver, car) => new { driver, car })
@@ -138,7 +139,6 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                 }
 
                 return new NoContentResult();
-
             }
             catch (Exception e)
             {
