@@ -9,7 +9,7 @@ namespace HappyBusProject.ModelsToReturn
         public string DriverName { get; set; }
         [Required]
         public int DriverAge { get; set; }
-        public DateTime MedicalExamPassDate { get; set; } 
+        public DateTime MedicalExamPassDate { get; set; }
         [Required]
         public string CarBrand { get; set; }
         [Required]

@@ -61,11 +61,13 @@ namespace HappyBusProject.Repositories
             {
                 var driver = _context.Drivers.FirstOrDefault(c => c.DriverName == name);
                 var carToRemove = _context.Cars.FirstOrDefault(c => c.CarId == driver.CarId);
+                var stateToRemove = _context.CarCurrentStates.FirstOrDefault(s => s.Id == driver.CarId);
 
                 if (driver != null && carToRemove != null)
                 {
                     _context.Remove(driver);
                     _context.Remove(carToRemove);
+                    _context.Remove(stateToRemove);
                     await _context.SaveChangesAsync();
                     return new OkResult();
                 }

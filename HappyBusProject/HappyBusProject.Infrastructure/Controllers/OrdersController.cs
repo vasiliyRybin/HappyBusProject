@@ -1,14 +1,8 @@
-﻿using AutoMapper;
-using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
-using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
 using HappyBusProject.HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
@@ -31,7 +25,7 @@ namespace HappyBusProject.Controllers
             return new ObjectResult(await _repository.GetAllAsync());
         }
 
-        
+
         [HttpGet("{FullName}")]
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Get(string FullName)
@@ -47,7 +41,7 @@ namespace HappyBusProject.Controllers
             return new ObjectResult(await _repository.CreateOrder(orderInput));
         }
 
-        
+
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public void Put(OrderInputModelPutMethod putMethod)
@@ -55,7 +49,7 @@ namespace HappyBusProject.Controllers
             _repository.UpdateOrder(putMethod);
         }
 
-        
+
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public void Delete(string FullName)

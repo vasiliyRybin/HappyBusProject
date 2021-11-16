@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace HappyBusProject.HappyBusProject.DataLayer.ViewModels
+﻿namespace HappyBusProject.HappyBusProject.DataLayer.ViewModels
 {
     public class CarStateViewModel
     {

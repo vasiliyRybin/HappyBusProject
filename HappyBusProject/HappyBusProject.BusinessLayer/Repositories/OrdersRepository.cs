@@ -8,9 +8,7 @@ using HappyBusProject.HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
@@ -73,7 +71,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         }
 
         public async Task<IActionResult> CreateOrder(OrderInputModel orderInput)
-        {            
+        {
             var check = OrderInputValidation.OrderValuesValidation(_repository, orderInput, out string errorMessage);
 
             if (check)
@@ -97,7 +95,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     _repository.CarCurrentStates.First(c => c.Id == carIDReadyToOrder).FreeSeatsNum -= orderInput.OrderSeatsNum;
                     await _repository.Orders.AddAsync(order);
                     _repository.SaveChanges();
-                    
+
                     return new OkObjectResult(view);
                 }
                 catch (Exception e)
@@ -123,7 +121,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             {
                 Order order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
                 OrderMethods.PutMethodMyMapper(_repository, putModel, order, user, out bool isPointModified);
-                
+
                 if (isPointModified)
                 {
                     var startPointKM = OrderMethods.GetLengthKM(_repository, order.StartPointId);
@@ -152,7 +150,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     _repository.Remove(order);
                     _repository.SaveChanges();
                 }
-            }            
+            }
         }
     }
 }

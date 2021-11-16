@@ -86,7 +86,7 @@ namespace HappyBusProject.Repositories
                     return new OkObjectResult(result);
                 }
 
-                return new NoContentResult();                
+                return new NoContentResult();
             }
             catch (Exception e)
             {

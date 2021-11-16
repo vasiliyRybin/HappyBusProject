@@ -2,9 +2,7 @@
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 {
@@ -81,7 +79,6 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
                         property.SetValue(order, fieldValue);
                     }
                 }
-
             }
             catch (Exception)
             {
