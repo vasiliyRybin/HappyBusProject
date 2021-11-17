@@ -1,10 +1,15 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 
 namespace HappyBusProject.AuthLayer.Common
 {
     public class AuthOptions
     {
+        public AuthOptions()
+        {
+            Secret = Environment.GetEnvironmentVariable("MeineSekretischeKey", EnvironmentVariableTarget.User);
+        }
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public string Secret { get; set; }

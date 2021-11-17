@@ -72,32 +72,40 @@ namespace HappyBusProject.AuthLayer.Controllers
 
         private string GenerateJWT(Account user)
         {
-            var authParams = authOptions.Value;
+            try
+            {
+                var authParams = authOptions.Value;
 
-            var securityKey = authParams.GetSymmetricSecurityKey();
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                var securityKey = authParams.GetSymmetricSecurityKey();
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<Claim>()
+                var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Name, user.Login),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
             };
 
-            foreach (var role in user.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                foreach (var role in user.Roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                }
+
+                var token = new JwtSecurityToken
+                (
+                    authParams.Issuer,
+                    authParams.Audience,
+                    claims,
+                    expires: DateTime.Now.AddSeconds(authParams.TokenLifetime),
+                    signingCredentials: credentials
+                );
+
+                return new JwtSecurityTokenHandler().WriteToken(token);
             }
+            catch (Exception)
+            {
 
-            var token = new JwtSecurityToken
-            (
-                authParams.Issuer,
-                authParams.Audience,
-                claims,
-                expires: DateTime.Now.AddSeconds(authParams.TokenLifetime),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                throw;
+            }            
         }
     }
 }
