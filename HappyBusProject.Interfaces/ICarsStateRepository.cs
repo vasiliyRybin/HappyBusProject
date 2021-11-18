@@ -1,7 +1,4 @@
-﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
-using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
-using HappyBusProject.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using HappyBusProject.Interfaces;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.Interfaces

@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HappyBusProject.DB.Models;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Interfaces
 {
     public interface IBusAppObject<T>
-        where T : IActionResult
+        where T: IEntity
     {
         Task<T> GetAllAsync();
         Task<T> GetByNameAsync(string name);
