@@ -1,5 +1,4 @@
-﻿using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
-using HappyBusProject.HappyBusProject.Interfaces;
+﻿using HappyBusProject.HappyBusProject.Interfaces;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

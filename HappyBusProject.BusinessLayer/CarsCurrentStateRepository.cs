@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
-using HappyBusProject.HappyBusProject.DataLayer.Models;
 using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,10 +11,9 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 {
-    public class CarsCurrentStateRepository : ICarsStateRepository<IActionResult>
+    public class CarsCurrentStateRepository : ICarsStateRepository<Car>   
     {
         private readonly MyShuttleBusAppNewDBContext _repository;
-        private readonly IMapper _mapper;
 
         public CarsCurrentStateRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext, IMapper mapper)
         {
@@ -26,7 +23,8 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
         public async Task<IActionResult> CreateState(CarStatePostModel newState)
         {
-            var driver = await _repository.Drivers.FirstOrDefaultAsync(d => d.DriverName == newState.DriverName);
+            var driver = await _repository.Drivers
+                .FirstOrDefaultAsync(d => d.DriverName == newState.DriverName);
 
             if (driver != null)
             {
@@ -106,10 +104,10 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
                 if (!currentState.Any())
                 {
-                    return new NoContentResult();
+                    return null;
                 }
 
-                return new OkObjectResult(currentState);
+                return currentState;
             }
             catch (Exception e)
             {

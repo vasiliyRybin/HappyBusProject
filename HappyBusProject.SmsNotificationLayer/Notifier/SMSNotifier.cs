@@ -9,14 +9,25 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
 {
-    public class SMSNotifier
+    public interface ISMSNotifier {
+        Task StartNotifierAsync();
+    }
+
+    public class AmazonSMSNotifier : ISMSNotifier
     {
+        public async Task StartNotifierAsync()
+        {
+        }
+    }
+    public class TwilioSMSNotifier: ISMSNotifier
+    {
+        private const int _smsDelay = 10_000;
         private Dictionary<string, string> _usersToNotify = new();
         private readonly string _connectionString;
         private readonly string _accountSid;
         private readonly string _authToken;
 
-        public SMSNotifier()
+        public TwilioSMSNotifier()
         {
             _accountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID", EnvironmentVariableTarget.User);
             _authToken = Environment.GetEnvironmentVariable("TWILIO_AUTH_TOKEN", EnvironmentVariableTarget.User);
@@ -29,11 +40,12 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
             {
                 try
                 {
-                    await Task.Delay(10000);
+                    await Task.Delay(_smsDelay);
 
                     using SqlConnection connection = new(_connectionString);
                     connection.Open();
-                    SqlCommand command = new(Queries.GetAllNotNotifiedUsers(), connection);
+                    var allUsers = Queries.GetAllNotNotifiedUsers();
+                    SqlCommand command = new(allUsers, connection);
                     var reader = command.ExecuteReader();
 
                     if (reader.HasRows)

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using HappyBusProject.DB.Models;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace HappyBusProject
 {
-    public partial class Car
+    public partial class Car: IEntity
     {
         public Car()
         {
@@ -21,5 +22,6 @@ namespace HappyBusProject
 
         public virtual ICollection<Driver> Drivers { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

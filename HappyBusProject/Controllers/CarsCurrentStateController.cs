@@ -1,6 +1,8 @@
-﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
 using HappyBusProject.HappyBusProject.Interfaces;
+using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -12,8 +14,9 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
     [ApiController]
     public class CarsCurrentStateController : ControllerBase
     {
-        private readonly ICarsStateRepository<IActionResult> _repository;
-        public CarsCurrentStateController(ICarsStateRepository<IActionResult> carsRepository)
+        private readonly ICarsStateRepository<Driver> _repository;
+        private readonly IMapper _mapper;
+        public CarsCurrentStateController(ICarsStateRepository<Driver> carsRepository)
         {
             _repository = carsRepository;
         }
@@ -30,7 +33,9 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string DriverName)
         {
-            return new ObjectResult(await _repository.GetByNameAsync(DriverName));
+            Driver driver = await _repository.GetByNameAsync(DriverName);
+            var driverVM = _mapper.Map<DriverViewModel>(driver);
+            return Ok(driverVM);
         }
 
 

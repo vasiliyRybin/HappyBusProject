@@ -59,21 +59,28 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
                     if (PropertyName != nameof(putModel.FullName))
                     {
                         var fieldValue = item.GetValue(putModel);
-                        if (fieldValue is null || string.IsNullOrWhiteSpace(fieldValue.ToString())) continue;
-                        if (order is null) order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
+
+                        if (fieldValue is null || string.IsNullOrWhiteSpace(fieldValue.ToString()))
+                            continue;
+
+                        if (order is null)
+                            order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
 
                         if (PropertyName.Contains("Point"))
                         {
                             var pointID = GetPointID(_repository, fieldValue.ToString());
                             var pointProperty = order.GetType().GetProperty(PropertyName + "Id");
                             var pointCurrentValue = (int)pointProperty.GetValue(order);
-                            if (pointCurrentValue != pointID && !isPointsModified) isPointsModified = true;
+
+                            if (pointCurrentValue != pointID && !isPointsModified) 
+                                isPointsModified = true;
 
                             pointProperty.SetValue(order, pointID);
                             continue;
                         }
 
-                        if (PropertyName == nameof(putModel.OrderType)) fieldValue = fieldValue.ToString();
+                        if (PropertyName == nameof(putModel.OrderType)) 
+                            fieldValue = fieldValue.ToString();
 
                         var property = order.GetType().GetProperty(PropertyName);
                         property.SetValue(order, fieldValue);
@@ -82,7 +89,6 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -106,7 +112,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 
         public static int GetLengthKM(MyShuttleBusAppNewDBContext _repository, int id)
         {
-            return _repository.RouteStops.FirstOrDefault(c => c.PointId == id).RouteLengthKM;
+            return _repository.RouteStops.First(c => c.PointId == id).RouteLengthKM;
         }
 
         public static Guid GetDriver(MyShuttleBusAppNewDBContext _repository, DateTime desiredDepartureDateTime)
