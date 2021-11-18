@@ -105,7 +105,7 @@ namespace HappyBusProject.AuthLayer.Controllers
             {
 
                 throw;
-            }            
+            }
         }
     }
 }

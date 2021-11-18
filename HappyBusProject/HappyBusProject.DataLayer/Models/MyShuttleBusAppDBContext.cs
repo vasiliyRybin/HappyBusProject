@@ -22,12 +22,18 @@ namespace HappyBusProject
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersRatingHistory> UsersRatingHistories { get; set; }
         public virtual DbSet<CarsCurrentState> CarCurrentStates { get; set; }
+        public virtual DbSet<NotifyState> NotifierState { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.Entity<NotifyState>(entity =>
+            {
+                entity.HasKey(k => k.OrderID).HasName("OrderID");
+            });
 
             modelBuilder.Entity<Car>(entity =>
             {
