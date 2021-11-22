@@ -23,14 +23,18 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return new JsonResult(await _repository.GetAllAsync());
+            var result = await _repository.GetAllAsync();
+            if (result != null) return Ok(result);
+            return NoContent();
         }
 
         [HttpGet("{name}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string name)
         {
-            return new JsonResult(await _repository.GetByNameAsync(name));
+            var result = await _repository.GetByNameAsync(name);
+            if (result != null) return Ok(result);
+            return NotFound();
         }
 
         [HttpPost]
@@ -38,9 +42,12 @@ namespace HappyBusProject.Controllers
         public async Task<IActionResult> PostTest([FromBody] DriverCarInputModel driverCar)
         {
             var isNotEmtpy = DriversInputValidation.IsEmptyInputValues(driverCar);
-            if (!isNotEmtpy) return new BadRequestResult();
+            if (!isNotEmtpy) return BadRequest();
 
-            return new ObjectResult(await _repository.CreateAsync(driverCar));
+            var result = await _repository.CreateAsync(driverCar);
+
+            if (result != null) return Ok(result);
+            return Conflict();
         }
 
         [HttpPut("{driverName}/{newCarBrand}")]

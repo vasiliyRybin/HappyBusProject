@@ -22,7 +22,9 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _repository.GetAllAsync());
+            var result = await _repository.GetAllAsync();
+            if (result != null) return Ok(result);
+            return NoContent();
         }
 
         [HttpGet("{name}")]
@@ -30,11 +32,7 @@ namespace HappyBusProject.Controllers
         public async Task<IActionResult> Get(string name)
         {
             var result = await _repository.GetByNameAsync(name);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-
+            if (result != null) return Ok(result);
             return NotFound();
         }
 
@@ -43,8 +41,11 @@ namespace HappyBusProject.Controllers
         public async Task<IActionResult> Post([FromQuery] UserInputModel userInput)
         {
             UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
-            
-            return Ok(await _repository.CreateAsync(userInput));
+
+            var result = await _repository.CreateAsync(userInput);
+
+            if (result != null) return Ok();
+            return Conflict();
         }
 
         [HttpPut]

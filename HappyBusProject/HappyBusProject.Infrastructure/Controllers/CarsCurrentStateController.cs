@@ -24,7 +24,10 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return new ObjectResult(await _repository.GetAllAsync());
+            var result = await _repository.GetAllAsync();
+
+            if (result != null) return Ok(result);
+            return NoContent();
         }
 
         [HttpGet("{DriverName}")]
@@ -50,7 +53,9 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateState(CarStatePostModel newState)
         {
-            return Ok(await _repository.CreateState(newState));
+            var result = await _repository.CreateState(newState);
+            if (result != null) return Ok(result);
+            return Conflict();
         }
 
         [HttpPut]

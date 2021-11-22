@@ -23,7 +23,10 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return new ObjectResult(await _repository.GetAllAsync());
+            var result = await _repository.GetAllAsync();
+
+            if (result != null) return Ok(result);
+            return NoContent();
         }
 
 
@@ -31,7 +34,10 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Get(string FullName)
         {
-            return new ObjectResult(await _repository.GetByNameAsync(FullName));
+            var result = await _repository.GetByNameAsync(FullName);
+
+            if (result != null) return Ok(result);
+            return NotFound();
         }
 
 
@@ -39,7 +45,10 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Post([FromBody] OrderInputModel orderInput)
         {
-            return new ObjectResult(await _repository.CreateOrder(orderInput));
+            var result = await _repository.CreateOrder(orderInput);
+
+            if (result != null) return Ok(result);
+            return Conflict();
         }
 
 
