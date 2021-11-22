@@ -73,7 +73,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
                 }
                 catch (Exception e)
                 {
-                    LogWriter.ErrorWriterToFile("SMS Notifier:\t" + e.Message + "\t" + e.InnerException);
+                    LogWriterSMS.ErrorWriterToFile("SMS Notifier:\t" + e.Message + "\t" + e.InnerException);
                     Console.WriteLine(e.Message + "\t" + e.InnerException);
                 }
             }

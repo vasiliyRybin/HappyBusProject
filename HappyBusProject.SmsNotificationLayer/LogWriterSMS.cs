@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HappyBusProject
 {
-    public static class LogWriter
+    public static class LogWriterSMS
     {
         private static readonly string logPath = Environment.CurrentDirectory.ToString() + $"\\Log\\{DateTime.Now.Year + "." + DateTime.Now.Month + "." + DateTime.Now.Day}.txt";
         public static void ErrorWriterToFile(string message)
