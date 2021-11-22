@@ -1,8 +1,10 @@
-﻿using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
+﻿using HappyBusProject.HappyBusProject.BusinessLayer.Notifier;
+using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
 using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
+using HappyBusProject.SmsNotificationLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -18,6 +20,7 @@ namespace HappyBusProject.Extensions
             services.AddTransient<IUsersRepository<UsersViewModel>, UsersRepository>();
             services.AddTransient<IOrderRepository<OrderViewModel>, OrdersRepository>();
             services.AddTransient<ICarsStateRepository<CarStateViewModel>, CarsCurrentStateRepository>();
+            services.AddTransient<ISmsNotifier, TwilioSMSNotifier>();
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)

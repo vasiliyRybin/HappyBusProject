@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HappyBusProject.AuthLayer.Common\HappyBusProject.AuthLayer.Common.csproj" />
+    <ProjectReference Include="..\HappyBusProject.SmsNotificationLayer\HappyBusProject.SmsNotificationLayer.csproj" />
   </ItemGroup>
 
 

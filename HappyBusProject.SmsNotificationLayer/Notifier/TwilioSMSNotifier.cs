@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.SmsNotificationLayer;
+using HappyBusProject.SmsNotificationLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,7 +10,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
 {
-    public sealed class SMSNotifier
+    public sealed class TwilioSMSNotifier : ISmsNotifier
     {
         private const int DELAY_MS = 10000;
         private readonly Dictionary<string, string> _usersToNotify = new();
@@ -17,7 +18,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
         private readonly string _accountSid;
         private readonly string _authToken;
 
-        public SMSNotifier()
+        public TwilioSMSNotifier()
         {
             _accountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID", EnvironmentVariableTarget.User);
             _authToken = Environment.GetEnvironmentVariable("TWILIO_AUTH_TOKEN", EnvironmentVariableTarget.User);

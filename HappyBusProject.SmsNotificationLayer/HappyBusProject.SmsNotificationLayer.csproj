@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="Twilio" Version="5.68.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HappyBusProject\HappyBusProject.csproj" />
   </ItemGroup>
 
 </Project>

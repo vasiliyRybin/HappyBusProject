@@ -7,7 +7,7 @@ namespace HappyBusProject.SmsNotificationLayer
     {
         static async Task Main(string[] args)
         {
-            var sms = new SMSNotifier();
+            var sms = new TwilioSMSNotifier();
             await sms.StartNotifierAsync();
         }
     }
