@@ -5,7 +5,6 @@ using HappyBusProject.HappyBusProject.Interfaces;
 using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using HappyBusProject.SmsNotificationLayer.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
@@ -16,11 +15,11 @@ namespace HappyBusProject.Extensions
     {
         public static void AddTransientScopedSingletonEntities(this IServiceCollection services)
         {
+            services.AddSingleton<ISmsNotifier, TwilioSMSNotifier>();
             services.AddTransient<IDriversRepository<DriverViewModel>, DriversRepository>();
             services.AddTransient<IUsersRepository<UsersViewModel>, UsersRepository>();
             services.AddTransient<IOrderRepository<OrderViewModel>, OrdersRepository>();
             services.AddTransient<ICarsStateRepository<CarStateViewModel>, CarsCurrentStateRepository>();
-            services.AddTransient<ISmsNotifier, TwilioSMSNotifier>();
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)
@@ -44,13 +43,13 @@ namespace HappyBusProject.Extensions
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
                     {
                         new OpenApiSecurityScheme
-                         {
+                        {
                            Reference = new OpenApiReference
                            {
                              Type = ReferenceType.SecurityScheme,
                              Id = "Bearer"
                            }
-                          },
+                        },
                           Array.Empty<string>()
                     }
                   });

@@ -4,7 +4,6 @@ using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
 using HappyBusProject.HappyBusProject.DataLayer.Models;
 using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

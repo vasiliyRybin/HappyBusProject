@@ -24,13 +24,13 @@ namespace HappyBusProject
                 errorMessage = "Invalid name";
                 return false;
             }
-            if (!string.IsNullOrWhiteSpace(usersInfo.PhoneNumber)) 
+            if (!string.IsNullOrWhiteSpace(usersInfo.PhoneNumber))
                 if (usersInfo.PhoneNumber.Length > 13 || usersInfo.PhoneNumber[1..].Any(c => !char.IsDigit(c)))
                 {
                     errorMessage = "Invalid phone number";
                     return false;
                 }
-            if (!string.IsNullOrWhiteSpace(usersInfo.Email)) 
+            if (!string.IsNullOrWhiteSpace(usersInfo.Email))
                 if (usersInfo.Email.Length > 30 || !new Regex(pattern: @"^([.,0-9a-zA-Z_-]{1,20}@[a-zA-Z]{1,10}.[a-zA-Z]{1,3})").IsMatch(usersInfo.Email))
                 {
                     errorMessage = "Invalid E-Mail address type";

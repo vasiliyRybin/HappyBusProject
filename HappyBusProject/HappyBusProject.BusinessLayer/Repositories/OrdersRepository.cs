@@ -5,7 +5,6 @@ using HappyBusProject.HappyBusProject.DataLayer.InputValidators;
 using HappyBusProject.HappyBusProject.DataLayer.Methods;
 using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

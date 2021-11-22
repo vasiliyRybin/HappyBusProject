@@ -1,6 +1,4 @@
-﻿using HappyBusProject.ModelsToReturn;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace HappyBusProject.Interfaces
 {
