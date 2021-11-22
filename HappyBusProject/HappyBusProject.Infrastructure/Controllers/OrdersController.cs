@@ -1,5 +1,6 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.OrdersInputModels;
+using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,8 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly IOrderRepository<IActionResult> _repository;
-        public OrdersController(IOrderRepository<IActionResult> repository)
+        private readonly IOrderRepository<OrderViewModel> _repository;
+        public OrdersController(IOrderRepository<OrderViewModel> repository)
         {
             _repository = repository;
         }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 {
-    public class OrdersRepository : IOrderRepository<IActionResult>
+    public class OrdersRepository : IOrderRepository<OrderViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _repository;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<OrderViewModel[]> GetAllAsync()
         {
             var orders = await _repository.Orders.ToListAsync();
 
@@ -39,10 +39,10 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     result[i].EndPoint = OrderMethods.GetPointName(_repository, orders[i].EndPointId);
                 }
 
-                return new OkObjectResult(result);
+                return result;
             }
 
-            return new NoContentResult();
+            return null;
         }
 
 
@@ -51,7 +51,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         /// </summary>
         /// <param name="Full Name"></param>
         /// <returns></returns>
-        public async Task<IActionResult> GetByNameAsync(string FullName)
+        public async Task<OrderViewModel> GetByNameAsync(string FullName)
         {
             var customer = await _repository.Users.FirstOrDefaultAsync(u => u.FullName == FullName);
 
@@ -63,21 +63,21 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     var result = _mapper.Map<OrderViewModel>(order);
                     result.StartPoint = OrderMethods.GetPointName(_repository, order.StartPointId);
                     result.EndPoint = OrderMethods.GetPointName(_repository, order.EndPointId);
-                    return new OkObjectResult(result);
+                    return result;
                 }
             }
 
-            return new NotFoundResult();
+            return null;
         }
 
-        public async Task<IActionResult> CreateOrder(OrderInputModel orderInput)
+        public async Task<OrderViewModel> CreateOrder(OrderInputModel orderInput)
         {
             var check = OrderInputValidation.OrderValuesValidation(_repository, orderInput, out string errorMessage);
 
             if (check)
             {
                 OrderMethods.RetrieveDataForCreatingOrder(_repository, orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum);
-                if (availableSeatsNum < orderInput.OrderSeatsNum) return new BadRequestObjectResult("Attempt to order more seats than available");
+                if (availableSeatsNum < orderInput.OrderSeatsNum) return null;
                 var startPointKM = OrderMethods.GetLengthKM(_repository, orderInput.StartPoint);
                 var endPointKM = OrderMethods.GetLengthKM(_repository, orderInput.EndPoint);
 
@@ -96,15 +96,15 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     await _repository.Orders.AddAsync(order);
                     _repository.SaveChanges();
 
-                    return new OkObjectResult(view);
+                    return null;
                 }
                 catch (Exception e)
                 {
                     LogWriter.ErrorWriterToFile(e.Message + " " + e.InnerException + " " + "POST Method, Orders Repository");
-                    return new UnprocessableEntityObjectResult(e.Message + " " + e.InnerException);
+                    return null;
                 }
             }
-            else return new BadRequestObjectResult(errorMessage);
+            else return null;
         }
 
 

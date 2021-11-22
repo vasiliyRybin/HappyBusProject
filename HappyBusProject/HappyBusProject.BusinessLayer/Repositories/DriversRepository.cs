@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class DriversRepository : IDriversRepository<IActionResult>
+    public class DriversRepository : IDriversRepository<DriverViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
         private readonly IMapper _mapper;
@@ -23,10 +23,10 @@ namespace HappyBusProject.Repositories
         }
 
 
-        public async Task<IActionResult> CreateAsync(DriverCarInputModel driverCar)
+        public async Task<DriverViewModel> CreateAsync(DriverCarInputModel driverCar)
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out _);
-            if (!isNotValid) return new BadRequestResult();
+            if (!isNotValid) return null;
 
             try
             {
@@ -45,18 +45,18 @@ namespace HappyBusProject.Repositories
                 await _context.Cars.AddAsync(car);
                 await _context.CarCurrentStates.AddAsync(carsCurrent);
                 int successUpdate = await _context.SaveChangesAsync();
-                if (successUpdate > 0) return new OkObjectResult(driverInfo);
-                else return new NoContentResult();
+                if (successUpdate > 0) return driverInfo;
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message);
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
 
-        public async Task<IActionResult> DeleteAsync(string name)
+        public async Task DeleteDriver(string name)
         {
             try
             {
@@ -70,19 +70,16 @@ namespace HappyBusProject.Repositories
                     _context.Remove(carToRemove);
                     _context.Remove(stateToRemove);
                     await _context.SaveChangesAsync();
-                    return new OkResult();
                 }
-                return new NoContentResult();
 
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + "\t" + "DELETE method, DriversRepository");
-                return new BadRequestObjectResult(e.Message);
             }
         }
 
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<DriverViewModel[]> GetAllAsync()
         {
             try
             {
@@ -97,70 +94,74 @@ namespace HappyBusProject.Repositories
                         result[i] = new DriverViewModel { DriverName = drivers[i].DriverName, DriverAge = drivers[i].DriverAge, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                     }
 
-                    return new OkObjectResult(result);
+                    return result;
                 }
 
-                return new NoContentResult();
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + "\t" + "GET Method, DriversRepository");
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
-        public async Task<IActionResult> GetByNameAsync(string name)
+        public async Task<DriverViewModel> GetByNameAsync(string name)
         {
             try
             {
-                var drivers = await _context.Drivers.Where(d => d.DriverName == name)
-                                                    .Join(_context.Cars, d => d.CarId, c => c.CarId,
-                                                    (d, c) => new { d.DriverName, d.DriverAge, d.Rating, c.CarBrand })
-                                                    .ToListAsync();
+                var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.DriverName == name);
+                Car car = new();
+                if (driver != null) car = _context.Cars.FirstOrDefault(c => c.CarId == driver.CarId);
 
-                if (drivers.Count != 0 && drivers != null)
+                if (driver != null && car != null)
                 {
-                    var driver = new DriverViewModel()
+                    var driverView = new DriverViewModel()
                     {
-                        DriverName = drivers[0].DriverName,
-                        DriverAge = drivers[0].DriverAge,
-                        CarBrand = drivers[0].CarBrand,
-                        Rating = drivers[0].Rating
+                        DriverName = driver.DriverName,
+                        DriverAge = driver.DriverAge,
+                        CarBrand = car.CarBrand,
+                        Rating = driver.Rating
                     };
 
-                    return new OkObjectResult(driver);
+                    return driverView;
                 }
 
-                return new NotFoundResult();
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method, DriversRepository");
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
-        public async Task<IActionResult> UpdateAsync(DriverCarInputModel driverCar)
+        public async Task UpdateDriver(DriverCarInputModel driverCar)
         {
-            if (!DriversInputValidation.PutMethodInputValidation(driverCar, out string errorMessage)) return new BadRequestResult();
+            if (!DriversInputValidation.PutMethodInputValidation(driverCar, out string errorMessage)) return;
 
             try
             {
-                var driverCarID = _context.Drivers.FirstOrDefault(c => c.DriverName.Contains(driverCar.DriverName)).CarId;
-                var car = _context.Cars.FirstOrDefault(c => c.CarId == driverCarID);
+                Guid CarID = Guid.Empty;
+                var driver = _context.Drivers.FirstOrDefault(c => c.DriverName.Contains(driverCar.DriverName));
+
+                if (driver != null) CarID = driver.CarId;
+                else return;
+
+                var car = _context.Cars.FirstOrDefault(c => c.CarId == CarID);
                 if (car != null)
                 {
                     car.CarBrand = driverCar.CarBrand;
                     await _context.SaveChangesAsync();
-                    return new OkResult();
+                    return;
                 }
 
-                return new NoContentResult();
+                return;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method, DriversRepository");
-                return new BadRequestObjectResult(e.Message);
+                return;
             }
         }
     }

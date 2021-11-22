@@ -1,5 +1,6 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
+using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,8 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
     [ApiController]
     public class CarsCurrentStateController : ControllerBase
     {
-        private readonly ICarsStateRepository<IActionResult> _repository;
-        public CarsCurrentStateController(ICarsStateRepository<IActionResult> carsRepository)
+        private readonly ICarsStateRepository<CarStateViewModel> _repository;
+        public CarsCurrentStateController(ICarsStateRepository<CarStateViewModel> carsRepository)
         {
             _repository = carsRepository;
         }
@@ -30,7 +31,11 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string DriverName)
         {
-            return new ObjectResult(await _repository.GetByNameAsync(DriverName));
+            var result = await _repository.GetByNameAsync(DriverName);
+
+            if (result != null) return Ok(result);
+
+            return NotFound();
         }
 
 
@@ -45,7 +50,7 @@ namespace HappyBusProject.HappyBusProject.Infrastructure.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateState(CarStatePostModel newState)
         {
-            return await _repository.CreateState(newState);
+            return Ok(await _repository.CreateState(newState));
         }
 
         [HttpPut]

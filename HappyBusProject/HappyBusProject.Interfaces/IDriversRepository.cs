@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 namespace HappyBusProject.Repositories
 {
     public interface IDriversRepository<T> : IBusAppObject<T>
-        where T : IActionResult
+        where T : DriverViewModel
     {
         Task<T> CreateAsync(DriverCarInputModel driverInfo);
-        Task<IActionResult> UpdateAsync(DriverCarInputModel driverInfo);
-        Task<IActionResult> DeleteAsync(string name);
+        Task UpdateDriver(DriverCarInputModel driverInfo);
+        Task DeleteDriver(string name);
     }
 }

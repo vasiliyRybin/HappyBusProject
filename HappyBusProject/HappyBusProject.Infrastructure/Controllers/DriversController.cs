@@ -11,10 +11,10 @@ namespace HappyBusProject.Controllers
     [Route("AppAPI/Drivers")]
     public class DriversController : ControllerBase
     {
-        private readonly IDriversRepository<IActionResult> _repository;
+        private readonly IDriversRepository<DriverViewModel> _repository;
         //private Guid UserID => Guid.Parse(User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-        public DriversController(IDriversRepository<IActionResult> driversRepository)
+        public DriversController(IDriversRepository<DriverViewModel> driversRepository)
         {
             _repository = driversRepository;
         }
@@ -45,7 +45,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPut("{driverName}/{newCarBrand}")]
         [Authorize(Roles = "Driver, Admin")]
-        public async Task<IActionResult> TestPut(string driverName, string newCarBrand)
+        public void UpdateDriver(string driverName, string newCarBrand)
         {
             DriverCarInputModel driverCar = new()
             {
@@ -53,14 +53,14 @@ namespace HappyBusProject.Controllers
                 CarBrand = newCarBrand
             };
 
-            return await _repository.UpdateAsync(driverCar);
+            _repository.UpdateDriver(driverCar);
         }
 
         [HttpDelete("{driverName}")]
         [Authorize(Roles = "Driver, Admin")]
-        public async Task<IActionResult> TestDelete(string driverName)
+        public void DeleteDriver(string driverName)
         {
-            return await _repository.DeleteAsync(driverName);
+            _repository.DeleteDriver(driverName);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
+using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository<IActionResult> _repository;
+        private readonly IUsersRepository<UsersViewModel> _repository;
 
-        public UsersController(IUsersRepository<IActionResult> usersRepository)
+        public UsersController(IUsersRepository<UsersViewModel> usersRepository)
         {
             _repository = usersRepository;
         }
@@ -21,14 +22,20 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            return new ObjectResult(await _repository.GetAllAsync());
+            return Ok(await _repository.GetAllAsync());
         }
 
         [HttpGet("{name}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string name)
         {
-            return new ObjectResult(await _repository.GetByNameAsync(name));
+            var result = await _repository.GetByNameAsync(name);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
 
         [HttpPost]
@@ -36,26 +43,26 @@ namespace HappyBusProject.Controllers
         public async Task<IActionResult> Post([FromQuery] UserInputModel userInput)
         {
             UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
-
-            return await _repository.CreateAsync(userInput);
+            
+            return Ok(await _repository.CreateAsync(userInput));
         }
 
         [HttpPut]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Put([FromBody] UserInputModel userInput)
+        public void Put([FromBody] UserInputModel userInput)
         {
-            if (string.IsNullOrWhiteSpace(userInput.PhoneNumber) && string.IsNullOrWhiteSpace(userInput.Email)) return new BadRequestResult();
+            if (string.IsNullOrWhiteSpace(userInput.PhoneNumber) && string.IsNullOrWhiteSpace(userInput.Email)) return;
 
             UsersInputValidation.AssignEmptyStringsToNullValues(userInput);
 
-            return await _repository.UpdateAsync(userInput);
+            _repository.UpdateAsync(userInput);
         }
 
         [HttpDelete("{name}")]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Delete(string name)
+        public void Delete(string name)
         {
-            return await _repository.DeleteAsync(name);
+            _repository.DeleteAsync(name);
         }
     }
 }

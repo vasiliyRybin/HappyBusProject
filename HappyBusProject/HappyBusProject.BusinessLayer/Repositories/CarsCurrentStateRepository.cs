@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 {
-    public class CarsCurrentStateRepository : ICarsStateRepository<IActionResult>
+    public class CarsCurrentStateRepository : ICarsStateRepository<CarStateViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _repository;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> CreateState(CarStatePostModel newState)
+        public async Task<CarStateViewModel> CreateState(CarStatePostModel newState)
         {
             var driver = await _repository.Drivers.FirstOrDefaultAsync(d => d.DriverName == newState.DriverName);
 
@@ -44,17 +44,17 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                     viewResult.DriverName = driver.DriverName;
 
                     _repository.Add(result);
-                    if (_repository.SaveChanges() > 0) return new OkObjectResult(viewResult);
+                    if (_repository.SaveChanges() > 0) return viewResult;
 
                 }
                 catch (Exception e)
                 {
                     LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message);
-                    return new ConflictObjectResult(e.Message);
+                    return null;
                 }
             }
 
-            return new EmptyResult();
+            return null;
         }
 
         public void DeleteState(string DriverName)
@@ -79,7 +79,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
             }
         }
 
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<CarStateViewModel[]> GetAllAsync()
         {
             try
             {
@@ -106,20 +106,20 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
 
                 if (!currentState.Any())
                 {
-                    return new NoContentResult();
+                    return null;
                 }
 
-                return new OkObjectResult(currentState);
+                return await currentState.ToArrayAsync();
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile("GET Method, CarsCurrentState Repository" + "\t" + e.Message);
-                return new ConflictObjectResult(e.Message);
+                return null;
             }
 
         }
 
-        public async Task<IActionResult> GetByNameAsync(string DriverName)
+        public async Task<CarStateViewModel> GetByNameAsync(string DriverName)
         {
             try
             {
@@ -134,16 +134,16 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                         var result = _mapper.Map<CarStateViewModel>(currentState);
                         result.DriverName = driver.DriverName;
                         result.CarBrand = _repository.Cars.FirstOrDefault(d => d.CarId == currentState.Id).CarBrand;
-                        return new OkObjectResult(result);
+                        return result;
                     }
                 }
 
-                return new NoContentResult();
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile("GET (by name) Method, CarsCurrentState Repository" + "\t" + e.Message);
-                return new ConflictObjectResult(e.Message);
+                return null;
             }
         }
 
@@ -161,7 +161,6 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
                         _mapper.Map(newState, currentCarState);
                         _repository.Update(currentCarState);
                         _repository.SaveChanges();
-
                     }
                     catch (Exception e)
                     {

@@ -1,5 +1,6 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.HappyBusProject.DataLayer.InputModels.CarStateModels;
+using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace HappyBusProject.HappyBusProject.Interfaces
 {
     public interface ICarsStateRepository<T> : IBusAppObject<T>
-        where T : IActionResult
+        where T : CarStateViewModel
     {
         public Task<T> CreateState(CarStatePostModel newState);
         public void UpdateState(string DriverName, CarStateInputModel carCurrentState);

@@ -9,9 +9,10 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
 {
-    public class SMSNotifier
+    public sealed class SMSNotifier
     {
-        private Dictionary<string, string> _usersToNotify = new();
+        private const int DELAY_MS = 10000;
+        private readonly Dictionary<string, string> _usersToNotify = new();
         private readonly string _connectionString;
         private readonly string _accountSid;
         private readonly string _authToken;
@@ -29,7 +30,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
             {
                 try
                 {
-                    await Task.Delay(10000);
+                    await Task.Delay(DELAY_MS);
 
                     using SqlConnection connection = new(_connectionString);
                     connection.Open();
@@ -43,13 +44,13 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
                             _usersToNotify.Add(reader.GetValue(0).ToString(), reader.GetValue(1).ToString());
                         }
 
+                        TwilioClient.Init(_accountSid, _authToken);
+
                         foreach (var item in _usersToNotify)
                         {
                             var phoneNumber = item.Value;
                             if (!string.IsNullOrWhiteSpace(phoneNumber))
                             {
-                                TwilioClient.Init(_accountSid, _authToken);
-
                                 var message = await MessageResource.CreateAsync(
                                     body: "SMS API Testing",
                                     from: new Twilio.Types.PhoneNumber("+19282725653"),
@@ -68,7 +69,6 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
 
                         reader.Close();
                     }
-
                 }
                 catch (Exception e)
                 {

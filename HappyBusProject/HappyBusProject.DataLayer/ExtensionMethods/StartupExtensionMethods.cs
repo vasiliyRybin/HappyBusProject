@@ -1,5 +1,7 @@
 ﻿using HappyBusProject.HappyBusProject.BusinessLayer.Repositories;
+using HappyBusProject.HappyBusProject.DataLayer.ViewModels;
 using HappyBusProject.HappyBusProject.Interfaces;
+using HappyBusProject.ModelsToReturn;
 using HappyBusProject.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,10 +14,10 @@ namespace HappyBusProject.Extensions
     {
         public static void AddTransientScopedSingletonEntities(this IServiceCollection services)
         {
-            services.AddTransient<IDriversRepository<IActionResult>, DriversRepository>();
-            services.AddTransient<IUsersRepository<IActionResult>, UsersRepository>();
-            services.AddTransient<IOrderRepository<IActionResult>, OrdersRepository>();
-            services.AddTransient<ICarsStateRepository<IActionResult>, CarsCurrentStateRepository>();
+            services.AddTransient<IDriversRepository<DriverViewModel>, DriversRepository>();
+            services.AddTransient<IUsersRepository<UsersViewModel>, UsersRepository>();
+            services.AddTransient<IOrderRepository<OrderViewModel>, OrdersRepository>();
+            services.AddTransient<ICarsStateRepository<CarStateViewModel>, CarsCurrentStateRepository>();
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)

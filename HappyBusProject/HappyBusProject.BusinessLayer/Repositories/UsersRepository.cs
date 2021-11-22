@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class UsersRepository : IUsersRepository<IActionResult>
+    public class UsersRepository : IUsersRepository<UsersViewModel>
     {
         private readonly MyShuttleBusAppNewDBContext _context;
         private readonly IMapper _mapper;
@@ -20,11 +20,11 @@ namespace HappyBusProject.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> CreateAsync(UserInputModel usersInfo)
+        public async Task<UsersViewModel> CreateAsync(UserInputModel usersInfo)
         {
             var check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
 
-            if (!check) return new BadRequestObjectResult(errorMessage);
+            if (!check) return null;
 
             try
             {
@@ -36,17 +36,17 @@ namespace HappyBusProject.Repositories
 
                 await _context.Users.AddAsync(user);
                 int successUpdate = _context.SaveChanges();
-                if (successUpdate > 0) return new OkObjectResult(_mapper.Map<UsersViewModel>(user));
-                return new NoContentResult();
+                if (successUpdate > 0) return _mapper.Map<UsersViewModel>(user);
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "POST Method");
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
-        public async Task<IActionResult> DeleteAsync(string name)
+        public async void DeleteAsync(string name)
         {
             try
             {
@@ -56,20 +56,15 @@ namespace HappyBusProject.Repositories
                 {
                     _context.Remove(user);
                     await _context.SaveChangesAsync();
-                    return new OkObjectResult("User successfully deleted");
                 }
-
-                return new NotFoundResult();
-
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "DELETE method");
-                return new BadRequestObjectResult(e.Message);
             }
         }
 
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<UsersViewModel[]> GetAllAsync()
         {
             try
             {
@@ -83,19 +78,19 @@ namespace HappyBusProject.Repositories
                         result[i] = _mapper.Map<UsersViewModel>(users[i]);
                     }
 
-                    return new OkObjectResult(result);
+                    return result;
                 }
 
-                return new NoContentResult();
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method");
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
-        public async Task<IActionResult> GetByNameAsync(string value)
+        public async Task<UsersViewModel> GetByNameAsync(string value)
         {
             try
             {
@@ -104,22 +99,22 @@ namespace HappyBusProject.Repositories
                 {
                     var userResult = _mapper.Map<UsersViewModel>(user);
 
-                    return new OkObjectResult(userResult);
+                    return userResult;
                 }
 
-                return new NotFoundResult();
+                return null;
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method (by value)");
-                return new BadRequestObjectResult(e.Message);
+                return null;
             }
         }
 
-        public async Task<IActionResult> UpdateAsync(UserInputModel usersInfo)
+        public void UpdateAsync(UserInputModel usersInfo)
         {
             bool check = UsersInputValidation.UsersValuesValidation(usersInfo, out string errorMessage);
-            if (!check) return new BadRequestObjectResult(errorMessage);
+            if (!check) return;
 
             try
             {
@@ -128,16 +123,12 @@ namespace HappyBusProject.Repositories
                 {
                     if (!string.IsNullOrWhiteSpace(usersInfo.PhoneNumber)) user.PhoneNumber = usersInfo.PhoneNumber;
                     if (!string.IsNullOrWhiteSpace(usersInfo.Email)) user.Email = usersInfo.Email;
-                    await _context.SaveChangesAsync();
-                    return new OkResult();
+                    _context.SaveChanges();
                 }
-
-                return new NoContentResult();
             }
             catch (Exception e)
             {
                 LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method");
-                return new BadRequestObjectResult(e.Message);
             }
         }
     }

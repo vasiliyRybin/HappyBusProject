@@ -1,15 +1,16 @@
 ﻿using HappyBusProject.HappyBusProject.DataLayer.InputModels;
 using HappyBusProject.Interfaces;
+using HappyBusProject.ModelsToReturn;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
     public interface IUsersRepository<T> : IBusAppObject<T>
-        where T : IActionResult
+        where T : UsersViewModel
     {
         Task<T> CreateAsync(UserInputModel usersInfo);
-        Task<IActionResult> UpdateAsync(UserInputModel usersInfo);
-        Task<IActionResult> DeleteAsync(string name);
+        public void UpdateAsync(UserInputModel usersInfo);
+        public void DeleteAsync(string name);
     }
 }
