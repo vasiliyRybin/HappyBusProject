@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject", "HappyBusProject\HappyBusProject.csproj", "{688C7210-EED2-449D-9DC1-7A330302CABF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F692B81-B31F-4852-B119-6ABE486633F0} = {3F692B81-B31F-4852-B119-6ABE486633F0}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.Tests", "HappyBusProject.Tests\HappyBusProject.Tests.csproj", "{75CAE445-2DAD-4D44-98C2-A2956B08B040}"
 EndProject
@@ -11,7 +14,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.AuthLayer",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.AuthLayer.Common", "HappyBusProject.AuthLayer.Common\HappyBusProject.AuthLayer.Common.csproj", "{4EFAF092-42E7-451D-860F-BF3CC9258C91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyBusProject.SmsNotificationLayer", "HappyBusProject.SmsNotificationLayer\HappyBusProject.SmsNotificationLayer.csproj", "{2170EC4C-0BCF-4DA4-8193-0E35A8E4A421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.SmsNotificationLayer", "HappyBusProject.SmsNotificationLayer\HappyBusProject.SmsNotificationLayer.csproj", "{2170EC4C-0BCF-4DA4-8193-0E35A8E4A421}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.BusinessLayer", "HappyBusProject.BusinessLayer\HappyBusProject.BusinessLayer.csproj", "{C5BA2754-5622-42F4-85FF-39F6C82CF814}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.DB", "HappyBusProject.DB\HappyBusProject.DB.csproj", "{3F692B81-B31F-4852-B119-6ABE486633F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyBusProject.Interfaces", "HappyBusProject.Interfaces\HappyBusProject.Interfaces.csproj", "{92BAD68A-5DDF-4902-A516-CC30EDDFFE61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyBusProject.Web", "HappyBusProject.DataLayer\HappyBusProject.Web.csproj", "{472B803A-11BC-43A7-9861-AB24DD1404B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +50,22 @@ Global
 		{2170EC4C-0BCF-4DA4-8193-0E35A8E4A421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2170EC4C-0BCF-4DA4-8193-0E35A8E4A421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2170EC4C-0BCF-4DA4-8193-0E35A8E4A421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5BA2754-5622-42F4-85FF-39F6C82CF814}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5BA2754-5622-42F4-85FF-39F6C82CF814}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5BA2754-5622-42F4-85FF-39F6C82CF814}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5BA2754-5622-42F4-85FF-39F6C82CF814}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F692B81-B31F-4852-B119-6ABE486633F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F692B81-B31F-4852-B119-6ABE486633F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F692B81-B31F-4852-B119-6ABE486633F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F692B81-B31F-4852-B119-6ABE486633F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92BAD68A-5DDF-4902-A516-CC30EDDFFE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92BAD68A-5DDF-4902-A516-CC30EDDFFE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92BAD68A-5DDF-4902-A516-CC30EDDFFE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92BAD68A-5DDF-4902-A516-CC30EDDFFE61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472B803A-11BC-43A7-9861-AB24DD1404B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472B803A-11BC-43A7-9861-AB24DD1404B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472B803A-11BC-43A7-9861-AB24DD1404B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472B803A-11BC-43A7-9861-AB24DD1404B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

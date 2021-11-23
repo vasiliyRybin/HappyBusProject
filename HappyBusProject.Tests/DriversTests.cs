@@ -1,5 +1,6 @@
-﻿using HappyBusProject.InputValidators;
-using HappyBusProject.ModelsToReturn;
+﻿using HappyBusProject.InputModels;
+using HappyBusProject.InputValidators;
+using HappyBusProject.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

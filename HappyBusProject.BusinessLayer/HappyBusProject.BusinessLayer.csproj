@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HappyBusProject.DataLayer\HappyBusProject.Web.csproj" />
+    <ProjectReference Include="..\HappyBusProject.DB\HappyBusProject.DB.csproj" />
+    <ProjectReference Include="..\HappyBusProject.Interfaces\HappyBusProject.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>
