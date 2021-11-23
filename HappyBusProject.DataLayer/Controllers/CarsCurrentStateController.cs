@@ -1,18 +1,8 @@
-﻿using HappyBusProject;
-using HappyBusProject.InputModels;
+﻿using HappyBusProject.InputModels;
 using HappyBusProject.Interfaces;
 using HappyBusProject.ViewModels;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers

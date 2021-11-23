@@ -8,8 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System;
 using System.Text.Json.Serialization;
 
 namespace HappyBusProject
@@ -25,7 +23,7 @@ namespace HappyBusProject
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
             services.AddControllers()
                     .AddJsonOptions(x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
