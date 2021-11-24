@@ -47,7 +47,7 @@ namespace HappyBusProject.Repositories
                 }
                 catch (Exception e)
                 {
-                    LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message);
+                    LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
                     return null;
                 }
             }
@@ -71,7 +71,7 @@ namespace HappyBusProject.Repositories
                     }
                     catch (Exception e)
                     {
-                        LogWriter.ErrorWriterToFile("Delete Method, CarsCurrentState Repository" + "\t" + e.Message);
+                        LogWriter.ErrorWriterToFile("Delete Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile("GET Method, CarsCurrentState Repository" + "\t" + e.Message);
+                LogWriter.ErrorWriterToFile("GET Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
                 return null;
             }
 
@@ -140,7 +140,7 @@ namespace HappyBusProject.Repositories
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile("GET (by name) Method, CarsCurrentState Repository" + "\t" + e.Message);
+                LogWriter.ErrorWriterToFile("GET (by name) Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
                 return null;
             }
         }
@@ -162,7 +162,7 @@ namespace HappyBusProject.Repositories
                     }
                     catch (Exception e)
                     {
-                        LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message);
+                        LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
                     }
                 }
             }

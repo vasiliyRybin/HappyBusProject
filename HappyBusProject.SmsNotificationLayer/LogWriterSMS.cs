@@ -6,7 +6,7 @@ namespace HappyBusProject
 {
     public static class LogWriterSMS
     {
-        private static readonly string logPath = Environment.CurrentDirectory.ToString() + $"\\Log\\{DateTime.Now.Year + "." + DateTime.Now.Month + "." + DateTime.Now.Day}.txt";
+        private static readonly string logPath = "D:\\Coding Projects\\Eleks\\HappyBusProject" + $"\\Log\\{DateTime.Now.Year + "." + DateTime.Now.Month + "." + DateTime.Now.Day}.txt";
         public static void ErrorWriterToFile(string message)
         {
             try

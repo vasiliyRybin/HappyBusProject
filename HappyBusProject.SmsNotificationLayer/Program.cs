@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.HappyBusProject.BusinessLayer.Notifier;
+using HappyBusProject.SmsNotificationLayer.Interfaces;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.SmsNotificationLayer
@@ -7,7 +8,7 @@ namespace HappyBusProject.SmsNotificationLayer
     {
         static async Task Main(string[] args)
         {
-            var sms = new TwilioSMSNotifier();
+            ISmsNotifier sms = new TwilioSMSNotifier();
             await sms.StartNotifierAsync();
         }
     }
