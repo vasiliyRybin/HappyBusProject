@@ -1,5 +1,8 @@
+using AutoMapper;
 using HappyBusProject.AuthLayer.Common;
 using HappyBusProject.Extensions;
+using HappyBusProject.HappyBusProject.DataLayer.MappingProfiles;
+using HappyBusProject.HappyBusProject.DataLayer.Profiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,10 +51,20 @@ namespace HappyBusProject
                 })
             ;
             services.AddSwaggerGen();
-            services.AddAutoMapper(typeof(Startup));
+
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new CarsCurrentStateProfile());
+                mc.AddProfile(new DriverProfile());
+                mc.AddProfile(new OrderProfile());
+                mc.AddProfile(new UserProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+
             services.AddControllersWithViews();
             services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
-            services.AddTransientScopedSingletonEntities();
+            services.AddTransientScopedSingletonEntities(mapper);
             services.AddCors
             (
                 options =>

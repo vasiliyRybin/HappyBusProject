@@ -1,4 +1,5 @@
-﻿using HappyBusProject.HappyBusProject.BusinessLayer.Notifier;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.BusinessLayer.Notifier;
 using HappyBusProject.InputModels;
 using HappyBusProject.Interfaces;
 using HappyBusProject.Repositories;
@@ -12,13 +13,14 @@ namespace HappyBusProject.Extensions
 {
     public static class StartupExtensionMethods
     {
-        public static void AddTransientScopedSingletonEntities(this IServiceCollection services)
+        public static void AddTransientScopedSingletonEntities(this IServiceCollection services, IMapper mapper)
         {
             services.AddSingleton<ISmsNotifier, TwilioSMSNotifier>();
             services.AddTransient<IDriversRepository<DriverViewModel, DriverCarInputModel>, DriversRepository>();
             services.AddTransient<IUsersRepository<UsersViewModel, UserInputModel>, UsersRepository>();
             services.AddTransient<IOrderRepository<OrderViewModel, OrderInputModel, OrderInputModelPutMethod>, OrdersRepository>();
             services.AddTransient<ICarsStateRepository<CarStateViewModel, CarStatePostModel, CarStateInputModel>, CarsCurrentStateRepository>();
+            services.AddSingleton(mapper);
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)
