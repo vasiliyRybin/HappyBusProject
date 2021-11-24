@@ -10,8 +10,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.14.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HappyBusProject.AuthLayer.Common\HappyBusProject.AuthLayer.Common.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,4 +1,4 @@
-﻿using HappyBusProject.SmsNotificationLayer;
+﻿using HappyBusProject.Notification;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,19 +7,9 @@ using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
+namespace HappyBusProject.TwilioNotification
 {
-    public interface ISMSNotifier {
-        Task StartNotifierAsync();
-    }
-
-    public class AmazonSMSNotifier : ISMSNotifier
-    {
-        public async Task StartNotifierAsync()
-        {
-        }
-    }
-    public class TwilioSMSNotifier: ISMSNotifier
+    public class TwilioSMSNotifier : ISMSNotifier
     {
         private const int _smsDelay = 10_000;
         private Dictionary<string, string> _usersToNotify = new();
@@ -27,11 +17,17 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
         private readonly string _accountSid;
         private readonly string _authToken;
 
-        public TwilioSMSNotifier()
+        public TwilioSMSNotifier(
+            string connectionString,
+            string accountSid,
+            string authToken)
+        //=>
+        //  (_connectionString, _accountSid, _authToken) =
+        //  (connectionString, accountSid, authToken);
         {
-            _accountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID", EnvironmentVariableTarget.User);
-            _authToken = Environment.GetEnvironmentVariable("TWILIO_AUTH_TOKEN", EnvironmentVariableTarget.User);
-            _connectionString = Environment.GetEnvironmentVariable("DBConnectionString", EnvironmentVariableTarget.User);
+            _accountSid = accountSid;
+            _authToken = authToken;
+            _connectionString = connectionString;
         }
 
         public async Task StartNotifierAsync()
@@ -84,10 +80,30 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Notifier
                 }
                 catch (Exception e)
                 {
-                    LogWriter.ErrorWriterToFile("SMS Notifier:\t" + e.Message + "\t" + e.InnerException);
                     Console.WriteLine(e.Message + "\t" + e.InnerException);
                 }
             }
+        }
+    }
+    public static class Queries
+    {
+        public static string GetAllNotNotifiedUsers()
+        {
+            return "SELECT[OrderID], US.PhoneNumber " +
+                   "FROM[MyShuttleBusAppNewDB].[dbo].[NotifierState] NTF " +
+                   "JOIN(SELECT[CustomerID], [ID] FROM[MyShuttleBusAppNewDB].[dbo].[Orders]) ORD " +
+                   "ON ORD.ID = NTF.OrderID " +
+                   "JOIN(SELECT[ID], [PhoneNumber] FROM[MyShuttleBusAppNewDB].[dbo].[Users]) US " +
+                   "ON US.ID = ORD.CustomerID " +
+                   "WHERE IsNotified = 0 " +
+                   "AND DATEDIFF(MINUTE, GETDATE(), [DesiredDepartureTime]) BETWEEN 0 AND 60 ";
+        }
+
+        public static string UpdateAfterNotification(string orderID)
+        {
+            return "UPDATE[MyShuttleBusAppNewDB].[dbo].[NotifierState] " +
+                   "SET IsNotified = 1 " +
+                  $"WHERE OrderID = '{orderID}' ";
         }
     }
 }

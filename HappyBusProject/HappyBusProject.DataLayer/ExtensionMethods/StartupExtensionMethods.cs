@@ -1,5 +1,8 @@
-﻿using HappyBusProject.HappyBusProject.Interfaces;
+﻿using HappyBusProject.BusinessLayer;
+using HappyBusProject.HappyBusProject.Interfaces;
+using HappyBusProject.Interfaces;
 using HappyBusProject.Repositories;
+using HappyBusProject.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -15,6 +18,8 @@ namespace HappyBusProject.Extensions
             services.AddTransient<IUsersRepository<IActionResult>, UsersRepository>();
             services.AddTransient<IOrderRepository<IActionResult>, OrdersRepository>();
             services.AddTransient<ICarsStateRepository<IActionResult>, CarsCurrentStateRepository>();
+            services.AddTransient<DriverService>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)

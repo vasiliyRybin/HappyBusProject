@@ -28,7 +28,7 @@ namespace HappyBusProject.HappyBusProject.BusinessLayer.Repositories
         {
             var orders = await _repository.Orders.ToListAsync();
 
-            if (orders.Count != 0)
+            if (orders.Any())
             {
                 var result = new OrderViewModel[orders.Count];
 

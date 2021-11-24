@@ -1,27 +1,36 @@
-﻿using System;
-using System.Linq;
+﻿using AutoMapper;
+using HappyBusProject.HappyBusProject.DataLayer.Models;
+using HappyBusProject.Interfaces;
+using HappyBusProject.ModelsToReturn;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
-namespace HappyBusProject.Repositories
+namespace HappyBusProject.Web.Services
 {
-    public class DriversRepository : IDriversRepository<Driver>
+    public class DriverService
     {
-        private readonly MyShuttleBusAppNewDBContext _context;
+        //private readonly MyShuttleBusAppNewDBContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger _log;
+        IRepository<Car> _carRepository;
+        IRepository<Driver> _drRepository;
+        IRepository<CarsCurrentState> _stRepository;
 
-        public DriversRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        public DriverService(
+            //repositories
+            IMapper mapper, ILogger log)
         {
-            _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
+            //repositories
+            _mapper = mapper;
+            _log = log;
         }
 
-        public async Task<Driver> CreateAsync(Driver driverCar)
-        {
-            var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out _);
-            if (!isNotValid) return null;
-
+        public async Task<DriverViewModel> CreateAsync(DriverCarInputModel driverCar)
+        { 
             try
             {
                 Car car = _mapper.Map<Car>(driverCar);
-
                 Driver driver = _mapper.Map<Driver>(driverCar);
                 driver.CarId = car.CarId;
 
@@ -31,20 +40,17 @@ namespace HappyBusProject.Repositories
                 CarsCurrentState carsCurrent = _mapper.Map<CarsCurrentState>(car);
                 _mapper.Map(driverCar, carsCurrent);
 
-                await _context.Drivers.AddAsync(driver);
-                await _context.Cars.AddAsync(car);
-                await _context.CarCurrentStates.AddAsync(carsCurrent);
-                int successUpdate = await _context.SaveChangesAsync();
-                if (successUpdate > 0) return new OkObjectResult(driverInfo);
-                else return null;
+                _drRepository.Create(driver);
+                _carRepository.Create(car);
+                _stRepository.Create(carsCurrent);
+                return driverInfo;
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message);
-                return new BadRequestObjectResult(e.Message);
+                _log.LogError(e, e.Message);
+                return null;
             }
         }
-
 
         public async Task<IActionResult> DeleteAsync(string name)
         {

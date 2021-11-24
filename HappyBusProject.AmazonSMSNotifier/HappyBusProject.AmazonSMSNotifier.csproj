@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Configurations>Debug;Release;ReleaseBY;ReleaseMD;ReleaseUA</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HappyBusProject.Notification\HappyBusProject.Notification.csproj" />
+  </ItemGroup>
+
+</Project>
