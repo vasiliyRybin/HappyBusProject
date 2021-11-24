@@ -4,6 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using Moq;
+using HappyBusProject.Interfaces;
+using HappyBusProject.HappyBusProject.DataLayer.Models;
+using HappyBusProject.Web.Services;
 
 namespace HappyBusProject.Tests
 {
@@ -92,5 +96,24 @@ namespace HappyBusProject.Tests
             if (driver != null) return true;
             return false;
         }
+
+        [Fact]
+        public async void CreateDriverTest()
+        {
+            var carMock = new Mock<IRepository<Car>>();
+            IRepository<Driver> _drRepository;// = new Mock<IRepository<Driver>>();
+            IRepository<CarsCurrentState> _stRepository;// = new Mock<IRepository<CarsCurrentState>>();
+
+            //repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
+            //Create - mock for 3 repositores!!!!
+            //carMock.Obj
+            var service = new DriverService(null, null/*pass mocks here*/);
+
+            var driverVM = await service.CreateAsync(null/*pass VM here*/);
+
+            Assert.Equal(11, driverVM.DriverAge);
+            //all properties of driverVM should be validated
+        }
+
     }
 }

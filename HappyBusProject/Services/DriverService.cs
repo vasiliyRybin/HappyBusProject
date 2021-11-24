@@ -82,9 +82,11 @@ namespace HappyBusProject.Web.Services
         {
             try
             {
+                //drivers
+                //cars 
                 var drivers = await _context.Drivers.Join(_context.Cars, d => d.CarId, c => c.CarId, (d, c) => new { d.DriverName, d.DriverAge, d.Rating, c.CarBrand }).ToListAsync();
 
-                if (drivers.Count != 0 && drivers != null)
+                if (drivers?.Count != 0)
                 {
                     var result = new DriverViewModel[drivers.Count];
 
@@ -93,10 +95,10 @@ namespace HappyBusProject.Web.Services
                         result[i] = new DriverViewModel { DriverName = drivers[i].DriverName, DriverAge = drivers[i].DriverAge, CarBrand = drivers[i].CarBrand, Rating = drivers[i].Rating };
                     }
 
-                    return new OkObjectResult(result);
+                    return (result);
                 }
 
-                return new NoContentResult();
+                return null;
             }
             catch (Exception e)
             {
