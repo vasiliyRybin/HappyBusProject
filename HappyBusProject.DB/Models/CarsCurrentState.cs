@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.Models
+namespace HappyBusProject
 {
-    public class CarsCurrentState
+    public class CarsCurrentState : IBaseEntity
     {
         public Guid Id { get; set; }
         public bool IsBusyNow { get; set; }

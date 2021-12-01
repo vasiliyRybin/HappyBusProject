@@ -1,8 +1,10 @@
 ﻿#nullable disable
 
+using HappyBusProject.Interfaces;
+
 namespace HappyBusProject
 {
-    public partial class RouteStop
+    public partial class RouteStop : IBaseEntity
     {
         public int PointId { get; set; }
         public string Name { get; set; }

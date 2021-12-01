@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 
 #nullable disable
 
 namespace HappyBusProject
 {
-    public partial class UsersRatingHistory
+    public partial class UsersRatingHistory : IBaseEntity
     {
         public Guid RecordId { get; set; }
         public Guid UserId { get; set; }

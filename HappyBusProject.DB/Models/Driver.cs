@@ -1,11 +1,12 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace HappyBusProject
 {
-    public partial class Driver
+    public partial class Driver : IBaseEntity
     {
         public Driver()
         {

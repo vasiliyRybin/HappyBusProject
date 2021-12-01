@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 
 #nullable disable
 
 namespace HappyBusProject
 {
-    public partial class Order
+    public partial class Order : IBaseEntity
     {
         public Guid Id { get; set; }
         public Guid CarId { get; set; }

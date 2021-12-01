@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HappyBusProject.HappyBusProject.DataLayer.Models;
 using HappyBusProject.InputModels;
 using HappyBusProject.Interfaces;
 using HappyBusProject.ViewModels;

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.Models
+namespace HappyBusProject
 {
-    public class NotifyState
+    public class NotifyState : IBaseEntity
     {
         public Guid OrderID { get; set; }
         public DateTime DesiredDepartureTime { get; set; }

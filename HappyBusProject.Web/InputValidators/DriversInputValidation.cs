@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.InputModels;
+using HappyBusProject.Interfaces;
 using System;
 using System.Text.RegularExpressions;
 
@@ -28,7 +29,8 @@ namespace HappyBusProject.InputValidators
             return true;
         }
 
-        public static bool DriversInputValidator(DriverCarInputModel driverCar, out string errorMessage)
+        public static bool DriversInputValidator<T>(T driverCar, out string errorMessage)
+            where T : IDriverCarInputModel
         {
             if (driverCar.CarBrand.Length > 30)
             {
@@ -77,7 +79,8 @@ namespace HappyBusProject.InputValidators
             return true;
         }
 
-        private static void SetDefaultValues(DriverCarInputModel driverCar)
+        private static void SetDefaultValues<T>(T driverCar)
+            where T : IDriverCarInputModel
         {
             driverCar.SeatsNum = -1;
             driverCar.SeatsNum = -1;

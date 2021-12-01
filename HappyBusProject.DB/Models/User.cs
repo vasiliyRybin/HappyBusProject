@@ -1,11 +1,12 @@
-﻿using System;
+﻿using HappyBusProject.Interfaces;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace HappyBusProject
 {
-    public partial class User
+    public partial class User : IBaseEntity
     {
         public User()
         {

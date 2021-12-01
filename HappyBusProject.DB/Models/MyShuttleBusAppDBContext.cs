@@ -1,5 +1,4 @@
-﻿using HappyBusProject.HappyBusProject.DataLayer.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 #nullable disable
