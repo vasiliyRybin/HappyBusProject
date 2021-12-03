@@ -90,23 +90,29 @@ namespace HappyBusProject.Services
         {
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out _);
             if (!isNotValid) return null;
+            const double DefaultDriverRating = 5.0;
 
             try
             {
+                var carID = Guid.NewGuid();
+                var driverID = Guid.NewGuid(); 
                 Car car = _mapper.Map<Car>(driverCar);
+                car.CarId = carID;
 
                 Driver driver = _mapper.Map<Driver>(driverCar);
                 driver.CarId = car.CarId;
+                driver.Id = driverID;
+                driver.Rating = DefaultDriverRating;
 
                 DriverViewModel driverInfo = _mapper.Map<DriverViewModel>(driver);
                 _mapper.Map(car, driverInfo);
 
-                CarsCurrentState carsCurrent = _mapper.Map<CarsCurrentState>(car);
-                _mapper.Map(driverCar, carsCurrent);
+                CarsCurrentState currentState = _mapper.Map<CarsCurrentState>(car);
+                _mapper.Map(driverCar, currentState);
 
-                var drSuccess = await _drRepository.Create(driver);
                 var carSuccess = await _carRepository.Create(car);
-                var stSuccess = await _stRepository.Create(carsCurrent);
+                var drSuccess = await _drRepository.Create(driver);
+                var stSuccess = await _stRepository.Create(currentState);
 
                 if (drSuccess && carSuccess && stSuccess) return driverInfo;
                 return null;
@@ -125,7 +131,7 @@ namespace HappyBusProject.Services
             try
             {
                 Guid CarID = Guid.Empty;
-                var driver = await _drRepository.GetFirstOrDefault(c => c.DriverName.Contains(driverInput.DriverName));
+                var driver = await _drRepository.GetFirstOrDefault(c => c.DriverName == driverInput.DriverName);
 
                 if (driver != null) CarID = driver.CarId;
                 else return false;
@@ -150,27 +156,29 @@ namespace HappyBusProject.Services
         }
 
 
-        //public async Task DeleteDriver(string name)
-        //{
-        //    try
-        //    {
-        //        var driver = _context.Drivers.FirstOrDefault(c => c.DriverName == name);
-        //        var carToRemove = _context.Cars.FirstOrDefault(c => c.CarId == driver.CarId);
-        //        var stateToRemove = _context.CarCurrentStates.FirstOrDefault(s => s.Id == driver.CarId);
+        public async Task<bool> DeleteDriver(string name)
+        {
+            try
+            {
+                var driver = await _drRepository.GetFirstOrDefault(c => c.DriverName == name);
+                var carToRemove = await _carRepository.GetFirstOrDefault(c => c.CarId == driver.CarId);
+                var stateToRemove = await _stRepository.GetFirstOrDefault(s => s.Id == driver.CarId);
 
-        //        if (driver != null && carToRemove != null)
-        //        {
-        //            _context.Remove(driver);
-        //            _context.Remove(carToRemove);
-        //            _context.Remove(stateToRemove);
-        //            await _context.SaveChangesAsync();
-        //        }
+                if (driver != null && carToRemove != null)
+                {
+                    var driverResult = await _drRepository.Delete(driver);
+                    var carResult = await _carRepository.Delete(carToRemove);
+                    var stateResult = await _stRepository.Delete(stateToRemove);
+                    if (driverResult && carResult && stateResult) return true;
+                }
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        LogWriter.ErrorWriterToFile(e.Message + "\t" + "DELETE method, NewDriversRepository");
-        //    }
-        //}  
+                return false;
+            }
+            catch (Exception e)
+            {
+                LogWriter.ErrorWriterToFile(e.Message + "\t" + "DELETE method, NewDriversRepository");
+                return false;
+            }
+        }
     }
 }

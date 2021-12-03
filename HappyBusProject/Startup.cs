@@ -58,6 +58,7 @@ namespace HappyBusProject
                 mc.AddProfile(new DriverProfile());
                 mc.AddProfile(new OrderProfile());
                 mc.AddProfile(new UserProfile());
+                mc.AddProfile(new CarProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

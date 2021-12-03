@@ -8,6 +8,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Profiles
         public CarProfile()
         {
             CreateMap<PutMethodDriverInputModel, Car>();
+            CreateMap<DriverCarInputModel, Car>();
         }
     }
 }

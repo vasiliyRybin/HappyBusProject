@@ -16,7 +16,7 @@ namespace HappyBusProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetDrivers()
         {
             var result = await _service.GetAllAsync();
 
@@ -26,7 +26,7 @@ namespace HappyBusProject.Controllers
 
         [HttpGet("{DriverName}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Get(string DriverName)
+        public async Task<IActionResult> GetDriverByName(string DriverName)
         {
             var result = await _service.GetByNameAsync(DriverName);
 
@@ -38,7 +38,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(DriverCarInputModel newState)
+        public async Task<IActionResult> CreateDriver(DriverCarInputModel newState)
         {
             var result = await _service.CreateAsync(newState);
             if (result != null) return Ok(result);
@@ -50,15 +50,17 @@ namespace HappyBusProject.Controllers
         public async Task<IActionResult> UpdateDriverInfo(PutMethodDriverInputModel driverInputModel)
         {
             var result = await _service.UpdateDriver(driverInputModel);
-            if (result) return Ok();
+            if (result) return Ok(driverInputModel);
             else return Conflict();
         }
 
-        //[HttpDelete]
-        //[Authorize(Roles = "Admin")]
-        //public async Task<IActionResult> RemoveState(string DriverName)
-        //{
-        //    _service.DeleteState(DriverName);
-        //}
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveDriver(string DriverName)
+        {
+            var result = await _service.DeleteDriver(DriverName);
+            if (result) return Ok();
+            return Conflict();
+        }
     }
 }
