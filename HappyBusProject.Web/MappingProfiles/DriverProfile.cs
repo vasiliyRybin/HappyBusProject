@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using HappyBusProject.InputModels;
 using HappyBusProject.ViewModels;
-using System;
 
 namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
 {

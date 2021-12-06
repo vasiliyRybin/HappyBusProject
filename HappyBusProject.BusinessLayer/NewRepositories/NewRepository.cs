@@ -38,6 +38,7 @@ namespace HappyBusProject.Repositories
         public async Task<bool> Delete(T item)
         {
             _context.Set<T>().Remove(item);
+            _context.Entry(item).State = EntityState.Deleted;
             var result = await _context.SaveChangesAsync();
             if (result > 0) return true;
             return false;
@@ -48,7 +49,7 @@ namespace HappyBusProject.Repositories
             _context.Set<T>().Update(ModifiedEntity);
             _context.Entry(ModifiedEntity).State = EntityState.Modified;
             var result = await _context.SaveChangesAsync();
-            if (result != 0) return true;
+            if (result > 0) return true;
             return false;
         }
     }

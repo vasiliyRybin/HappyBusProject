@@ -95,7 +95,7 @@ namespace HappyBusProject.Services
             try
             {
                 var carID = Guid.NewGuid();
-                var driverID = Guid.NewGuid(); 
+                var driverID = Guid.NewGuid();
                 Car car = _mapper.Map<Car>(driverCar);
                 car.CarId = carID;
 
@@ -164,7 +164,7 @@ namespace HappyBusProject.Services
                 var carToRemove = await _carRepository.GetFirstOrDefault(c => c.CarId == driver.CarId);
                 var stateToRemove = await _stRepository.GetFirstOrDefault(s => s.Id == driver.CarId);
 
-                if (driver != null && carToRemove != null)
+                if (driver != null && carToRemove != null && stateToRemove != null)
                 {
                     var driverResult = await _drRepository.Delete(driver);
                     var carResult = await _carRepository.Delete(carToRemove);

@@ -26,7 +26,6 @@ namespace HappyBusProject
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers()
                     .AddJsonOptions(x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
