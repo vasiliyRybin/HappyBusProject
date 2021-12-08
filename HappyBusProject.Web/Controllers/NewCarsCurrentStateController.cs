@@ -1,20 +1,20 @@
 ﻿using HappyBusProject.InputModels;
-using HappyBusProject.Interfaces;
-using HappyBusProject.ViewModels;
+using HappyBusProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
 {
-    [Route("AppAPI/CarsState")]
+    [Route("AppAPI/NewCarsState")]
     [ApiController]
-    public class CarsCurrentStateController : ControllerBase
+    public class NewCarsCurrentStateController : ControllerBase
     {
-        private readonly ICarsStateRepository<CarStateViewModel, CarStatePostModel, CarStateInputModel> _repository;
-        public CarsCurrentStateController(ICarsStateRepository<CarStateViewModel, CarStatePostModel, CarStateInputModel> carsRepository)
+        private NewCarsCurrentStateService _service { get; }
+
+        public NewCarsCurrentStateController(NewCarsCurrentStateService service)
         {
-            _repository = carsRepository;
+            _service = service;
         }
 
 
@@ -22,7 +22,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            var result = await _repository.GetAllAsync();
+            var result = await _service.GetAllStates();
 
             if (result != null) return Ok(result);
             return NoContent();
@@ -32,10 +32,9 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string DriverName)
         {
-            var result = await _repository.GetByNameAsync(DriverName);
+            var result = await _service.GetStateByDriversName(DriverName);
 
             if (result != null) return Ok(result);
-
             return NotFound();
         }
 
@@ -51,23 +50,27 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateState(CarStatePostModel newState)
         {
-            var result = await _repository.CreateState(newState);
+            var result = await _service.CreateState(newState);
             if (result != null) return Ok(result);
             return Conflict();
         }
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public void UpdateState(string DriverName, CarStateInputModel newState)
+        public async Task<IActionResult> UpdateState(string DriverName, CarStateInputModel newState)
         {
-            _repository.UpdateState(DriverName, newState);
+            var result = await _service.UpdateState(DriverName, newState);
+            if (result) return Ok(result);
+            return Conflict();
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public void RemoveState(string DriverName)
+        public async Task<IActionResult> RemoveState(string DriverName)
         {
-            _repository.DeleteState(DriverName);
+            var result = await _service.DeleteState(DriverName);
+            if (result) return Ok(result);
+            return Conflict();
         }
     }
 }

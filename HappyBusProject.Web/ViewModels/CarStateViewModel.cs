@@ -1,4 +1,6 @@
-﻿namespace HappyBusProject.ViewModels
+﻿using System;
+
+namespace HappyBusProject.ViewModels
 {
     public class CarStateViewModel
     {
@@ -7,5 +9,6 @@
         public bool IsBusyNow { get; set; }
         public int SeatsNum { get; set; }
         public int FreeSeatsNum { get; set; }
+        public DateTime DepartureTime { get; set; }
     }
 }

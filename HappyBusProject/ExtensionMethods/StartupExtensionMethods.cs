@@ -20,6 +20,7 @@ namespace HappyBusProject.Extensions
             services.AddTransient(typeof(IRepository<>), typeof(NewRepository<>));
             services.AddTransient<DriverService>();
             services.AddTransient<UsersService>();
+            services.AddTransient<NewCarsCurrentStateService>();
             services.AddSingleton(mapper);
         }
 

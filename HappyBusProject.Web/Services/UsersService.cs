@@ -25,7 +25,6 @@ namespace HappyBusProject.Services
         public async Task<UsersViewModel> GetByNameAsync(string name)
         {
             User user = await Task.Run(() => _usRepository.GetFirstOrDefault(x => x.FullName == name));
-
             if (user != null)
             {
                 var userView = _mapper.Map<UsersViewModel>(user);
