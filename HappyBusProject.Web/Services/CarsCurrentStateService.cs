@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Services
 {
-    public class NewCarsCurrentStateService
+    public class CarsCurrentStateService
     {
         private IRepository<Driver> DrRepository { get; }
         private IRepository<Car> CarRepository { get; }
         private IRepository<CarsCurrentState> StRepository { get; }
         private IMapper Mapper { get; }
 
-        public NewCarsCurrentStateService(IRepository<Driver> drRepository, IRepository<Car> carRepository, IRepository<CarsCurrentState> stRepository, IMapper mapper)
+        public CarsCurrentStateService(IRepository<Driver> drRepository, IRepository<Car> carRepository, IRepository<CarsCurrentState> stRepository, IMapper mapper)
         {
             CarRepository = carRepository;
             DrRepository = drRepository;

@@ -1,17 +1,13 @@
 ﻿using HappyBusProject.InputModels;
-using System.Linq;
+using System;
 
 namespace HappyBusProject.HappyBusProject.DataLayer.InputValidators
 {
     public static class OrderInputValidation
     {
-        public static bool OrderValuesValidation(MyShuttleBusAppNewDBContext _repository, OrderInputModel orderInput, out string errorMessage)
+        public static bool OrderValuesValidation(Guid CustomerGUID, string startPoint, string endPoint, OrderInputModel orderInput, out string errorMessage)
         {
-            var CustomerGUID = _repository.Users.FirstOrDefault(u => u.FullName == orderInput.FullName);
-            var startPoint = _repository.RouteStops.FirstOrDefault(r => r.Name == orderInput.StartPoint);
-            var endPoint = _repository.RouteStops.FirstOrDefault(r => r.Name == orderInput.EndPoint);
-
-            if (CustomerGUID is null)
+            if (CustomerGUID == default)
             {
                 errorMessage = "Customer not found";
                 return false;
@@ -31,7 +27,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.InputValidators
                 errorMessage = "Ordering more than 5 seats is prohibited";
                 return false;
             }
-            if (startPoint is null || endPoint is null)
+            if (string.IsNullOrWhiteSpace(startPoint) || string.IsNullOrWhiteSpace(endPoint))
             {
                 errorMessage = "No such bus stop exists";
                 return false;

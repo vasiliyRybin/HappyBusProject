@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace HappyBusProject.Repositories
 {
-    public class NewRepository<T> : IRepository<T>
+    public class Repository<T> : IRepository<T>
         where T : class
     {
         private readonly MyShuttleBusAppNewDBContext _context;
 
-        public NewRepository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
+        public Repository(MyShuttleBusAppNewDBContext myShuttleBusAppNewDBContext)
         {
             _context = myShuttleBusAppNewDBContext ?? throw new ArgumentNullException(nameof(myShuttleBusAppNewDBContext));
         }

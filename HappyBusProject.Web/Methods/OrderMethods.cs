@@ -1,4 +1,5 @@
 ﻿using HappyBusProject.InputModels;
+using HappyBusProject.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -7,6 +8,8 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 {
     public static class OrderMethods
     {
+        private const double PriceFor1KM = 0.065;
+
         #region RetrieveDataForCreatingOrder
 
         public static void RetrieveDataForCreatingOrder(MyShuttleBusAppNewDBContext _repository, OrderInputModel orderInput, out Guid carIDReadyToOrder, out Guid whoOrdered, out int availableSeatsNum)
@@ -28,7 +31,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
         #endregion
 
         #region AssignValuesToOrder
-        public static void AssignValuesToOrder(Order order, MyShuttleBusAppNewDBContext _repository, Guid carIDReadyToOrder, Guid whoOrdered, OrderInputModel orderInput, double totalPrice)
+        public static void AssignValuesToOrder(Order order, IRepository<RouteStop> _repository, Guid carIDReadyToOrder, Guid whoOrdered, OrderInputModel orderInput, double totalPrice)
         {
             order.StartPointId = GetPointID(_repository, orderInput.StartPoint);
             order.EndPointId = GetPointID(_repository, orderInput.EndPoint);
@@ -45,7 +48,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 
         #region PutMethodMyMapper
 
-        public static void PutMethodMyMapper(MyShuttleBusAppNewDBContext _repository, OrderInputModelPutMethod putModel, Order order, User user, out bool isPointsModified)
+        public static void PutMethodMyMapper(IRepository<Order> _OrderRepository, IRepository<RouteStop> _RouteRepository, OrderInputModelPutMethod putModel, Order order, User user, out bool isPointsModified)
         {
             var inputPropertiesArr = putModel.GetType().GetProperties();
             isPointsModified = false;
@@ -59,11 +62,11 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
                     {
                         var fieldValue = item.GetValue(putModel);
                         if (fieldValue is null || string.IsNullOrWhiteSpace(fieldValue.ToString())) continue;
-                        if (order is null) order = _repository.Orders.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
+                        if (order is null) order = _OrderRepository.Get().Result.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id);
 
                         if (PropertyName.Contains("Point"))
                         {
-                            var pointID = GetPointID(_repository, fieldValue.ToString());
+                            var pointID = _RouteRepository.GetPointID(fieldValue.ToString());
                             var pointProperty = order.GetType().GetProperty(PropertyName + "Id");
                             var pointCurrentValue = (int)pointProperty.GetValue(order);
                             if (pointCurrentValue != pointID && !isPointsModified) isPointsModified = true;
@@ -88,24 +91,24 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 
         #endregion
 
-        public static string GetPointName(MyShuttleBusAppNewDBContext _repository, int id)
+        public static string GetPointName(this IRepository<RouteStop> _RouteRepository, int id)
         {
-            return _repository.RouteStops.FirstOrDefault(c => c.PointId == id).Name;
+            return _RouteRepository.GetFirstOrDefault(c => c.PointId == id).Result.Name;
         }
 
-        public static int GetPointID(MyShuttleBusAppNewDBContext _repository, string pointName)
+        public static int GetPointID(this IRepository<RouteStop> _repository, string pointName)
         {
-            return _repository.RouteStops.FirstOrDefault(c => c.Name == pointName).PointId;
+            return _repository.GetFirstOrDefault(c => c.Name == pointName).Result.PointId;
         }
 
-        public static int GetLengthKM(MyShuttleBusAppNewDBContext _repository, string pointName)
+        public static int GetLengthKM(this IRepository<RouteStop> _repository, string pointName)
         {
-            return _repository.RouteStops.FirstOrDefault(c => c.Name == pointName).RouteLengthKM;
+            return _repository.GetFirstOrDefault(c => c.Name == pointName).Result.RouteLengthKM;
         }
 
-        public static int GetLengthKM(MyShuttleBusAppNewDBContext _repository, int id)
+        public static int GetLengthKM(this IRepository<RouteStop> _repository, int id)
         {
-            return _repository.RouteStops.FirstOrDefault(c => c.PointId == id).RouteLengthKM;
+            return _repository.GetFirstOrDefault(c => c.PointId == id).Result.RouteLengthKM;
         }
 
         public static Guid GetDriver(MyShuttleBusAppNewDBContext _repository, DateTime desiredDepartureDateTime)
@@ -121,7 +124,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.Methods
 
         public static double CountTotalPrice(int startPointKM, int endPointKM, int OrderSeatsNum)
         {
-            return Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * 0.065 * OrderSeatsNum : (endPointKM - startPointKM) * 0.065 * OrderSeatsNum);
+            return Math.Round(startPointKM > endPointKM ? (startPointKM - endPointKM) * PriceFor1KM * OrderSeatsNum : (endPointKM - startPointKM) * PriceFor1KM * OrderSeatsNum);
         }
     }
 }

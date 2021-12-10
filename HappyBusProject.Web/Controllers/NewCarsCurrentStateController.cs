@@ -10,11 +10,11 @@ namespace HappyBusProject.Controllers
     [ApiController]
     public class NewCarsCurrentStateController : ControllerBase
     {
-        private NewCarsCurrentStateService _service { get; }
+        private CarsCurrentStateService Service { get; }
 
-        public NewCarsCurrentStateController(NewCarsCurrentStateService service)
+        public NewCarsCurrentStateController(CarsCurrentStateService service)
         {
-            _service = service;
+            Service = service;
         }
 
 
@@ -22,7 +22,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            var result = await _service.GetAllStates();
+            var result = await Service.GetAllStates();
 
             if (result != null) return Ok(result);
             return NoContent();
@@ -32,7 +32,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(string DriverName)
         {
-            var result = await _service.GetStateByDriversName(DriverName);
+            var result = await Service.GetStateByDriversName(DriverName);
 
             if (result != null) return Ok(result);
             return NotFound();
@@ -50,7 +50,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateState(CarStatePostModel newState)
         {
-            var result = await _service.CreateState(newState);
+            var result = await Service.CreateState(newState);
             if (result != null) return Ok(result);
             return Conflict();
         }
@@ -59,7 +59,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateState(string DriverName, CarStateInputModel newState)
         {
-            var result = await _service.UpdateState(DriverName, newState);
+            var result = await Service.UpdateState(DriverName, newState);
             if (result) return Ok(result);
             return Conflict();
         }
@@ -68,7 +68,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveState(string DriverName)
         {
-            var result = await _service.DeleteState(DriverName);
+            var result = await Service.DeleteState(DriverName);
             if (result) return Ok(result);
             return Conflict();
         }

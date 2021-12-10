@@ -1,20 +1,20 @@
 ﻿using HappyBusProject.InputModels;
-using HappyBusProject.Interfaces;
-using HappyBusProject.ViewModels;
+using HappyBusProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace HappyBusProject.Controllers
 {
-    [Route("AppAPI/Orders")]
+    [Route("AppAPI/NewOrders")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class NewOrdersController : ControllerBase
     {
-        private readonly IOrderRepository<OrderViewModel, OrderInputModel, OrderInputModelPutMethod> _repository;
-        public OrdersController(IOrderRepository<OrderViewModel, OrderInputModel, OrderInputModelPutMethod> repository)
+        public OrdersService Service { get; }
+
+        public NewOrdersController(OrdersService service)
         {
-            _repository = repository;
+            Service = service;
         }
 
 
@@ -22,7 +22,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get()
         {
-            var result = await _repository.GetAllAsync();
+            var result = await Service.GetAllOrdersAsync();
 
             if (result != null) return Ok(result);
             return NoContent();
@@ -33,7 +33,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Get(string FullName)
         {
-            var result = await _repository.GetByNameAsync(FullName);
+            var result = await Service.GetOrderByCustomerNameAsync(FullName);
 
             if (result != null) return Ok(result);
             return NotFound();
@@ -44,7 +44,7 @@ namespace HappyBusProject.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Post([FromBody] OrderInputModel orderInput)
         {
-            var result = await _repository.CreateOrder(orderInput);
+            var result = await Service.CreateOrder(orderInput);
 
             if (result != null) return Ok(result);
             return Conflict();
@@ -53,17 +53,23 @@ namespace HappyBusProject.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public void Put(OrderInputModelPutMethod putMethod)
+        public async Task<IActionResult> Put(OrderInputModelPutMethod putMethod)
         {
-            _repository.UpdateOrder(putMethod);
+            var result = await Service.UpdateOrder(putMethod);
+
+            if (result != null) return Ok(result);
+            return Conflict();
         }
 
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public void Delete(string FullName)
+        public async Task<IActionResult> Delete(string FullName)
         {
-            _repository.DeleteOrder(FullName);
+            var result = await Service.DeleteOrder(FullName);
+
+            if (result) return Ok(result);
+            return Conflict();
         }
     }
 }

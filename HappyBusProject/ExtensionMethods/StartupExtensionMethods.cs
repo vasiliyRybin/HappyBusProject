@@ -17,10 +17,11 @@ namespace HappyBusProject.Extensions
             //services.AddTransient<IUsersRepository<UsersViewModel, UserInputModel>, UsersRepository>();
             //services.AddTransient<IOrderRepository<OrderViewModel, OrderInputModel, OrderInputModelPutMethod>, OrdersRepository>();
             //services.AddTransient<ICarsStateRepository<CarStateViewModel, CarStatePostModel, CarStateInputModel>, CarsCurrentStateRepository>();
-            services.AddTransient(typeof(IRepository<>), typeof(NewRepository<>));
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<DriverService>();
             services.AddTransient<UsersService>();
-            services.AddTransient<NewCarsCurrentStateService>();
+            services.AddTransient<CarsCurrentStateService>();
+            services.AddTransient<OrdersService>();
             services.AddSingleton(mapper);
         }
 
