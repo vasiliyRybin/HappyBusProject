@@ -12,11 +12,6 @@ namespace HappyBusProject.Extensions
     {
         public static void AddTransientScopedSingletonEntities(this IServiceCollection services, IMapper mapper)
         {
-            //services.AddSingleton<ISmsNotifier, TwilioSMSNotifier>();
-            //services.AddTransient<IDriversRepository<DriverViewModel, DriverCarInputModel>, DriversRepository>();
-            //services.AddTransient<IUsersRepository<UsersViewModel, UserInputModel>, UsersRepository>();
-            //services.AddTransient<IOrderRepository<OrderViewModel, OrderInputModel, OrderInputModelPutMethod>, OrdersRepository>();
-            //services.AddTransient<ICarsStateRepository<CarStateViewModel, CarStatePostModel, CarStateInputModel>, CarsCurrentStateRepository>();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<DriverService>();
             services.AddTransient<UsersService>();

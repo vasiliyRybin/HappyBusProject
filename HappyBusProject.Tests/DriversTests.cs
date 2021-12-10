@@ -1,28 +1,19 @@
 ﻿using HappyBusProject.InputModels;
 using HappyBusProject.InputValidators;
+using HappyBusProject.Interfaces;
+using HappyBusProject.Services;
 using HappyBusProject.ViewModels;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Xunit;
 
 namespace HappyBusProject.Tests
 {
     public class DriversTests
     {
-        //TODO: A driver with the same registration plate can't be added twice
 
-        private async Task<List<DriverViewModel>> GetTestDrivers()
-        {
-            var drivers = new List<DriverViewModel>
-            {
-                new DriverViewModel{ DriverName = "Vitalii", DriverAge = 28, Rating = 5.0},
-                new DriverViewModel{ DriverName = "Kate", DriverAge = 25, Rating = 4.5},
-                new DriverViewModel{ DriverName = "Lehonti", DriverAge = 27, Rating = 5.0},
-                new DriverViewModel{ DriverName = "Nikolai", DriverAge = 45, Rating = 4.1}
-            };
-            return await Task.FromResult(drivers);
-        }
 
         private static DriverViewModel CreateDriver(DriverCarInputModel driverCar, out string errorMessage)
         {
@@ -42,21 +33,38 @@ namespace HappyBusProject.Tests
                 if (driverInfo != null) return new DriverViewModel();
                 else return new DriverViewModel();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                LogWriter.ErrorWriterToFile(e.Message);
-                return new DriverViewModel();
+                return null;
             }
         }
 
+        [Fact]
+        public void GetAllDrivers()
+        {
+            var driverMock = new Mock<IRepository<Driver>>();
+            driverMock.Setup(c => c.Get().Result).Returns(MockRepository.GetTestDrivers());
 
+            var carMock = new Mock<IRepository<Car>>();
+            carMock.Setup(c => c.Get().Result).Returns(MockRepository.GetTestCars());
+
+            var currentStateMock = new Mock<IRepository<CarsCurrentState>>();
+            currentStateMock.Setup(c => c.Get().Result).Returns(MockRepository.GetTestCarStates());
+
+            var controller = new DriverService(driverMock.Object, carMock.Object, currentStateMock.Object, null, null);
+
+            var result = controller.GetAllAsync().Result;
+
+            var viewResult = Assert.IsType<DriverViewModel[]>(result);
+            Assert.Equal(MockRepository.GetTestDrivers().Count(), viewResult.Length);
+        }
 
 
         [Fact]
-        public async Task GetAllReturnListOfDrivers()
+        public void GetAllReturnListOfDrivers()
         {
-            var testDrivers = await GetTestDrivers();
-            int result = testDrivers.Count;
+            var testDrivers = MockRepository.GetTestDrivers();
+            int result = testDrivers.Count();
 
             Assert.Equal(4, result);
         }
@@ -80,16 +88,16 @@ namespace HappyBusProject.Tests
         }
 
         [Fact]
-        public async Task DeleteDriver_DriverNotFoundAsync()
+        public void DeleteDriver_DriverNotFound()
         {
-            var driverToDelete = await GetTestDrivers();
+            var driverToDelete = MockRepository.GetTestDrivers();
             var result = DeleteDriver(driverToDelete, " ");
             Assert.False(result);
         }
 
-        public static bool DeleteDriver(List<DriverViewModel> drivers, string FullName)
+        public static bool DeleteDriver(IEnumerable<Driver> drivers, string FullName)
         {
-            var driver = drivers.Find(c => c.DriverName == FullName);
+            var driver = drivers.FirstOrDefault(c => c.DriverName == FullName);
             if (driver != null) return true;
             return false;
         }
