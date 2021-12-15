@@ -17,7 +17,7 @@ namespace HappyBusProject
             Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
-            .WriteTo.File("Logs/Log_.txt")
+            .WriteTo.File($"Logs/Log_{DateTime.Now.Day}.{DateTime.Now.Month}.{DateTime.Now.Year}.txt")
             .CreateLogger();
 
             try

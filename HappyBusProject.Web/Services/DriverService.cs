@@ -79,9 +79,9 @@ namespace HappyBusProject.Services
                         result[i] = new DriverViewModel { DriverName = preResult[i].DriverName, DriverAge = preResult[i].DriverAge, CarBrand = preResult[i].CarBrand, Rating = preResult[i].Rating };
                     }
 
-                    var a = 10;
-                    var b = 0;
-                    var c = a / b;
+                    //var a = 10;
+                    //var b = 0;
+                    //var c = a / b;
 
                     return result;
                 }
