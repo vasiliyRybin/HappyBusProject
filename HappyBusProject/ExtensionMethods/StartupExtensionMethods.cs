@@ -4,6 +4,7 @@ using HappyBusProject.Repositories;
 using HappyBusProject.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 
 namespace HappyBusProject.Extensions

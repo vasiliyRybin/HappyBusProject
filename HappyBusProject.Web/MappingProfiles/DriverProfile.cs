@@ -2,7 +2,7 @@
 using HappyBusProject.InputModels;
 using HappyBusProject.ViewModels;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
+namespace HappyBusProject.MappingProfiles
 {
     public class DriverProfile : Profile
     {
@@ -12,6 +12,7 @@ namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
             CreateMap<Driver, DriverViewModel>();
             CreateMap<DriverCarInputModel, Driver>();
             CreateMap<PutMethodDriverInputModel, Driver>();
+            CreateMap<Driver, Car>();
         }
     }
 }

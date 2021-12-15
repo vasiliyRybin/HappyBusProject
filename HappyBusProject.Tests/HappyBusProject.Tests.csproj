@@ -22,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HappyBusProject\HappyBusProject.csproj" />
+    <ProjectReference Include="..\HappyBusProject.DB\HappyBusProject.DB.csproj" />
+    <ProjectReference Include="..\HappyBusProject.Interfaces\HappyBusProject.Interfaces.csproj" />
+    <ProjectReference Include="..\HappyBusProject.Web\HappyBusProject.Web.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using HappyBusProject.InputModels;
 using HappyBusProject.ViewModels;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.MappingProfiles
+namespace HappyBusProject.MappingProfiles
 {
     public class OrderProfile : Profile
     {

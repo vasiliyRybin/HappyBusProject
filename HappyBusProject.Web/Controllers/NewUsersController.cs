@@ -44,7 +44,7 @@ namespace HappyBusProject.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin, User")]
-        public async Task<IActionResult> UpdateDriverInfo(UserInputModel userInputModel)
+        public async Task<IActionResult> UpdateUserInfo(UserInputModel userInputModel)
         {
             var result = await _service.UpdateUserInfo(userInputModel);
             if (result) return Ok(userInputModel);
@@ -53,7 +53,7 @@ namespace HappyBusProject.Controllers
 
         [HttpDelete("{UserName}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveDriver(string UserName)
+        public async Task<IActionResult> RemoveUser(string UserName)
         {
             var result = await _service.DeleteUser(UserName);
             if (result) return Ok();

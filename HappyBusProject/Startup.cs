@@ -1,8 +1,7 @@
 using AutoMapper;
 using HappyBusProject.AuthLayer.Common;
 using HappyBusProject.Extensions;
-using HappyBusProject.HappyBusProject.DataLayer.MappingProfiles;
-using HappyBusProject.HappyBusProject.DataLayer.Profiles;
+using HappyBusProject.MappingProfiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text.Json.Serialization;
 
 namespace HappyBusProject
@@ -21,7 +21,6 @@ namespace HappyBusProject
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
@@ -64,7 +63,9 @@ namespace HappyBusProject
 
             services.AddControllersWithViews();
             services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
+
             services.AddTransientScopedSingletonEntities(mapper);
+
             services.AddCors
             (
                 options =>
@@ -88,6 +89,8 @@ namespace HappyBusProject
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSerilogRequestLogging();
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
@@ -97,6 +100,7 @@ namespace HappyBusProject
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseCors();
 
             app.UseEndpoints(endpoints =>

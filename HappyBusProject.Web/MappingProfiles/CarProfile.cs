@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using HappyBusProject.InputModels;
 
-namespace HappyBusProject.HappyBusProject.DataLayer.Profiles
+namespace HappyBusProject.MappingProfiles
 {
     public class CarProfile : Profile
     {

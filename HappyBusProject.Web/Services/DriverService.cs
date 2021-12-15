@@ -29,11 +29,14 @@ namespace HappyBusProject.Services
 
         public async Task<DriverViewModel> GetByNameAsync(string name)
         {
+            _log.LogInformation("Get driver by name: method execution started");
+
             try
             {
                 Driver driver = await Task.Run(() => _drRepository.GetFirstOrDefault(x => x.DriverName == name));
-                Car car = default;
-                if (driver != default) car = await Task.Run(() => _carRepository.GetFirstOrDefault(x => x.CarId == driver.CarId));
+                Car car = null;
+                //if (driver != null) car = await _carRepository.GetFirstOrDefault(x => x.CarId == driver.CarId);
+                if (driver != null) car = await Task.Run(() => _carRepository.Get().Result.FirstOrDefault(x => x.CarId == driver.CarId));
 
                 if (driver != null && car != null)
                 {
@@ -52,13 +55,15 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "GET Method, NewDriversRepository");
+                _log.LogError(e + "\t" + "GET Method, NewDriversRepository");
                 return null;
             }
         }
 
         public async Task<DriverViewModel[]> GetAllAsync()
         {
+            _log.LogInformation("Get all drivers: method execution started");
+
             try
             {
                 var drivers = await _drRepository.Get();
@@ -74,6 +79,10 @@ namespace HappyBusProject.Services
                         result[i] = new DriverViewModel { DriverName = preResult[i].DriverName, DriverAge = preResult[i].DriverAge, CarBrand = preResult[i].CarBrand, Rating = preResult[i].Rating };
                     }
 
+                    var a = 10;
+                    var b = 0;
+                    var c = a / b;
+
                     return result;
                 }
 
@@ -81,13 +90,15 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + "\t" + "GET Method, NewDriversRepository");
+                _log.LogError(e + "\t" + "GET Method, NewDriversRepository");
                 return null;
             }
         }
 
         public async Task<DriverViewModel> CreateAsync(DriverCarInputModel driverCar)
         {
+            _log.LogInformation("Create driver: method execution started");
+
             var isNotValid = DriversInputValidation.DriversInputValidator(driverCar, out _);
             if (!isNotValid) return null;
             const double DefaultDriverRating = 5.0;
@@ -119,13 +130,15 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message);
+                _log.LogError(e + "\t" + "POST Method, NewDriversRepository");
                 return null;
             }
         }
 
         public async Task<bool> UpdateDriver(PutMethodDriverInputModel driverInput)
         {
+            _log.LogInformation("Update driver info: method execution started");
+
             if (!DriversInputValidation.DriversInputValidator(driverInput, out string errorMessage)) return false;
 
             try
@@ -150,7 +163,7 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + " " + "PUT method, NewDriversRepository");
+                _log.LogError(e + "\t" + "PUT Method, NewDriversRepository");
                 return false;
             }
         }
@@ -158,6 +171,8 @@ namespace HappyBusProject.Services
 
         public async Task<bool> DeleteDriver(string name)
         {
+            _log.LogInformation("Delete driver: method execution started");
+
             try
             {
                 var driver = await _drRepository.GetFirstOrDefault(c => c.DriverName == name);
@@ -176,7 +191,7 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile(e.Message + "\t" + "DELETE method, NewDriversRepository");
+                _log.LogError(e + "\t" + "DELETE Method, NewDriversRepository");
                 return false;
             }
         }
