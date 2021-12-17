@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using HappyBusProject.InputModels;
-using HappyBusProject.InputValidators;
 using HappyBusProject.Interfaces;
 using HappyBusProject.MappingProfiles;
 using HappyBusProject.Services;
 using HappyBusProject.ViewModels;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace HappyBusProject.Tests
@@ -42,19 +40,23 @@ namespace HappyBusProject.Tests
             currentStateMock = new Mock<IRepository<CarsCurrentState>>();
             currentStateMock.Setup(c => c.Get().Result).Returns(MockRepository.GetTestCarStates());
 
-            controller = new DriverService(driverMock.Object, carMock.Object, currentStateMock.Object, null, Mapper);
+            controller = new DriverService(driverMock.Object, carMock.Object, currentStateMock.Object, new NullLogger<DriverService>(), Mapper);
         }
 
         [Fact]
         public void GetDriverByName_DriverFound()
         {
             string DriverName = "Vitalii";
+            Guid CarGUID = Guid.Parse("AB68891B-962F-4B4D-9A15-325276F6307F");
+
 
             InitialiseDriverRelatedRepositories(out Mock<IRepository<Driver>> driverMock, out Mock<IRepository<Car>> carMock, out Mock<IRepository<CarsCurrentState>> currentStateMock, out DriverService controller);
             driverMock.Setup(s => s.GetFirstOrDefault(It.IsAny<Func<Driver, bool>>()).Result)
                 .Returns(MockRepository.GetTestDrivers().FirstOrDefault(d => d.DriverName == DriverName));
+            carMock.Setup(s => s.GetFirstOrDefault(It.IsAny<Func<Car, bool>>()).Result)
+                .Returns(MockRepository.GetTestCars().FirstOrDefault(d => d.CarId == CarGUID));
 
-            controller = new DriverService(driverMock.Object, carMock.Object, currentStateMock.Object, null, Mapper);
+            controller = new DriverService(driverMock.Object, carMock.Object, currentStateMock.Object, new NullLogger<DriverService>(), Mapper);
 
             var result = controller.GetByNameAsync(DriverName).Result;
 
@@ -127,14 +129,15 @@ namespace HappyBusProject.Tests
             carState.FreeSeatsNum = carState.SeatsNum;
 
             InitialiseDriverRelatedRepositories(out Mock<IRepository<Driver>> driverMock, out Mock<IRepository<Car>> carMock, out Mock<IRepository<CarsCurrentState>> currentStateMock, out DriverService controller);
-            driverMock.Setup(c => c.Create(driver).Result).Returns(true);
-            carMock.Setup(c => c.Create(car).Result).Returns(true);
-            currentStateMock.Setup(c => c.Create(carState).Result).Returns(true);
+            driverMock.Setup(c => c.Create(It.IsAny<Driver>()).Result).Returns(true);
+            carMock.Setup(c => c.Create(It.IsAny<Car>()).Result).Returns(true);
+            currentStateMock.Setup(c => c.Create(It.IsAny<CarsCurrentState>()).Result).Returns(true);
 
 
             var result = controller.CreateAsync(newDriver).Result;
 
-            Assert.NotNull(result); //Fix it!!!
+            Assert.NotNull(result);
+            Assert.IsType<DriverViewModel>(result);
         }
 
         [Fact]
@@ -148,19 +151,19 @@ namespace HappyBusProject.Tests
 
             driverMock.Setup(s => s.GetFirstOrDefault(It.IsAny<Func<Driver, bool>>()).Result)
                 .Returns(MockRepository.GetTestDrivers().FirstOrDefault(d => d.DriverName == someDriver.DriverName));
-            driverMock.Setup(s => s.Delete(someDriver).Result).Returns(true);
+            driverMock.Setup(s => s.Delete(It.IsAny<Driver>()).Result).Returns(true);
 
             carMock.Setup(s => s.GetFirstOrDefault(It.IsAny<Func<Car, bool>>()).Result)
                 .Returns(MockRepository.GetTestCars().FirstOrDefault(d => d.CarId == someCar.CarId));
-            carMock.Setup(s => s.Delete(someCar).Result).Returns(true);
+            carMock.Setup(s => s.Delete(It.IsAny<Car>()).Result).Returns(true);
 
             currentStateMock.Setup(s => s.GetFirstOrDefault(It.IsAny<Func<CarsCurrentState, bool>>()).Result)
                 .Returns(MockRepository.GetTestCarStates().FirstOrDefault(d => d.Id == someCar.CarId));
-            currentStateMock.Setup(s => s.Delete(someCarState).Result).Returns(true);
+            currentStateMock.Setup(s => s.Delete(It.IsAny<CarsCurrentState>()).Result).Returns(true);
 
             var result = controller.DeleteDriver(someDriver.DriverName).Result;
 
-            Assert.False(result); //Fix it!
+            Assert.True(result);
         }
     }
 }

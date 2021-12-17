@@ -4,14 +4,14 @@ using HappyBusProject.Repositories;
 using HappyBusProject.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Serilog;
+using Serilog.Core;
 using System;
 
 namespace HappyBusProject.Extensions
 {
     public static class StartupExtensionMethods
     {
-        public static void AddTransientScopedSingletonEntities(this IServiceCollection services, IMapper mapper)
+        public static void AddTransientScopedSingletonEntities(this IServiceCollection services, IMapper mapper, Logger logger)
         {
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<DriverService>();
@@ -19,6 +19,7 @@ namespace HappyBusProject.Extensions
             services.AddTransient<CarsCurrentStateService>();
             services.AddTransient<OrdersService>();
             services.AddSingleton(mapper);
+            services.AddSingleton(logger);
         }
 
         public static void AddSwaggerJWTTokenAuthentication(this IServiceCollection services)

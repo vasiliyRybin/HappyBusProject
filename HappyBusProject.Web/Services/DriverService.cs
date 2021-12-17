@@ -35,8 +35,7 @@ namespace HappyBusProject.Services
             {
                 Driver driver = await Task.Run(() => _drRepository.GetFirstOrDefault(x => x.DriverName == name));
                 Car car = null;
-                //if (driver != null) car = await _carRepository.GetFirstOrDefault(x => x.CarId == driver.CarId);
-                if (driver != null) car = await Task.Run(() => _carRepository.Get().Result.FirstOrDefault(x => x.CarId == driver.CarId));
+                if (driver != null) car = await _carRepository.GetFirstOrDefault(x => x.CarId == driver.CarId);
 
                 if (driver != null && car != null)
                 {
@@ -79,9 +78,9 @@ namespace HappyBusProject.Services
                         result[i] = new DriverViewModel { DriverName = preResult[i].DriverName, DriverAge = preResult[i].DriverAge, CarBrand = preResult[i].CarBrand, Rating = preResult[i].Rating };
                     }
 
-                    //var a = 10;
-                    //var b = 0;
-                    //var c = a / b;
+                    var a = 10;
+                    var b = 0;
+                    var c = a / b;
 
                     return result;
                 }

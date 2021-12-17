@@ -1,9 +1,10 @@
 using HibernatingRhinos.Profiler.Appender.EntityFramework;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
 using System;
+using System.IO;
 
 namespace HappyBusProject
 {
@@ -14,36 +15,37 @@ namespace HappyBusProject
             EntityFrameworkProfilerBootstrapper.PreStart();
             EntityFrameworkProfiler.Initialize();
 
-            Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .WriteTo.File($"Logs/Log_{DateTime.Now.Day}.{DateTime.Now.Month}.{DateTime.Now.Year}.txt")
-            .CreateLogger();
+            var loggerConfiguration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(path: "appsettings.json")
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                .Build();
+
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(loggerConfiguration, sectionName: "Serilog")
+                .CreateLogger();
 
             try
             {
-                Log.Information("Starting web host");
+                logger.Warning("Starting web host");
 
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
-            }
-            finally
-            {
-                Log.CloseAndFlush();
+                logger.Fatal(ex, "Host terminated unexpectedly");
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .UseSerilog()
+            .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                .ReadFrom.Configuration(hostingContext.Configuration))
             .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }
-                );
+                });
+
     }
 }
 

@@ -61,10 +61,14 @@ namespace HappyBusProject
 
             IMapper mapper = mapperConfig.CreateMapper();
 
+            var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration, sectionName: "Serilog")
+                .CreateLogger();
+
             services.AddControllersWithViews();
             services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
 
-            services.AddTransientScopedSingletonEntities(mapper);
+            services.AddTransientScopedSingletonEntities(mapper, logger);
 
             services.AddCors
             (
@@ -88,8 +92,6 @@ namespace HappyBusProject
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseSerilogRequestLogging();
 
             app.UseSwagger();
             app.UseSwaggerUI();
