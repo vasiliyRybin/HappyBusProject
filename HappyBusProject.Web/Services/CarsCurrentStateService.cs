@@ -2,6 +2,7 @@
 using HappyBusProject.InputModels;
 using HappyBusProject.Interfaces;
 using HappyBusProject.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,15 @@ namespace HappyBusProject.Services
         private IRepository<Driver> DrRepository { get; }
         private IRepository<Car> CarRepository { get; }
         private IRepository<CarsCurrentState> StRepository { get; }
+        private readonly ILogger _logger;
         private IMapper Mapper { get; }
 
-        public CarsCurrentStateService(IRepository<Driver> drRepository, IRepository<Car> carRepository, IRepository<CarsCurrentState> stRepository, IMapper mapper)
+        public CarsCurrentStateService(IRepository<Driver> drRepository, IRepository<Car> carRepository, IRepository<CarsCurrentState> stRepository, ILogger<CarsCurrentStateService> logger, IMapper mapper)
         {
             CarRepository = carRepository;
             DrRepository = drRepository;
             StRepository = stRepository;
+            _logger = logger;
             Mapper = mapper;
         }
 
@@ -54,7 +57,7 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile("GET Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
+                _logger.LogError(e + "\t" + "GET Method, CarsCurrentState Service" + "\t" + e.Message + "\n");
                 return null;
             }
         }
@@ -84,7 +87,7 @@ namespace HappyBusProject.Services
             }
             catch (Exception e)
             {
-                LogWriter.ErrorWriterToFile("GET (by name) Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
+                _logger.LogError(e + "\t" + "GET (by name) Method, CarsCurrentState Service" + "\t" + e.Message + "\n");
                 return null;
             }
         }
@@ -114,7 +117,7 @@ namespace HappyBusProject.Services
                 }
                 catch (Exception e)
                 {
-                    LogWriter.ErrorWriterToFile("POST Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
+                    _logger.LogError(e + "\t" + "POST Method, CarsCurrentState Service" + "\t" + e.Message + "\n");
                     return null;
                 }
             }
@@ -140,7 +143,7 @@ namespace HappyBusProject.Services
                     }
                     catch (Exception e)
                     {
-                        LogWriter.ErrorWriterToFile("PUT Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
+                        _logger.LogError(e + "\t" + "PUT Method, CarsCurrentState Service" + "\t" + e.Message + "\n");
                         return false;
                     }
                 }
@@ -165,7 +168,7 @@ namespace HappyBusProject.Services
                     }
                     catch (Exception e)
                     {
-                        LogWriter.ErrorWriterToFile("Delete Method, CarsCurrentState Repository" + "\t" + e.Message + "\n");
+                        _logger.LogError(e + "\t" + "Delete Method, CarsCurrentState Service" + "\t" + e.Message + "\n");
                         return false;
                     }
                 }

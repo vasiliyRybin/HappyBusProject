@@ -4,6 +4,7 @@ using HappyBusProject.HappyBusProject.DataLayer.Methods;
 using HappyBusProject.InputModels;
 using HappyBusProject.Interfaces;
 using HappyBusProject.ViewModels;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,15 +17,17 @@ namespace HappyBusProject.Services
         private IRepository<RouteStop> RouteRepo { get; }
         private IRepository<User> UserRepo { get; }
         private IRepository<CarsCurrentState> CurrentStateRepo { get; }
+        private readonly ILogger _logger;
         public IMapper Mapper { get; }
 
-        public OrdersService(IRepository<Order> orRepository, IRepository<RouteStop> _routeRepo, IRepository<User> _userRepo, IRepository<CarsCurrentState> _currRepo, IMapper mapper)
+        public OrdersService(IRepository<Order> orRepository, IRepository<RouteStop> _routeRepo, IRepository<User> _userRepo, IRepository<CarsCurrentState> _currRepo, ILogger<OrdersService> logger, IMapper mapper)
         {
             OrderRepo = orRepository;
             RouteRepo = _routeRepo;
             UserRepo = _userRepo;
             CurrentStateRepo = _currRepo;
             Mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<OrderViewModel[]> GetAllOrdersAsync()
@@ -55,8 +58,9 @@ namespace HappyBusProject.Services
 
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString() + "\t" + "OrdersService");
                 return null;
             }
         }
@@ -67,14 +71,22 @@ namespace HappyBusProject.Services
 
             if (customer != null)
             {
-                var order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).FirstOrDefault(c => c.CustomerId == customer.Id);
-                if (order != null)
+                try
                 {
-                    var result = Mapper.Map<OrderViewModel>(order);
-                    result.StartPoint = RouteRepo.GetFirstOrDefault(o => o.PointId == order.StartPointId).Result.Name;
-                    result.EndPoint = RouteRepo.GetFirstOrDefault(o => o.PointId == order.EndPointId).Result.Name;
-                    result.CustomerName = customer.FullName;
-                    return result;
+                    var order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).FirstOrDefault(c => c.CustomerId == customer.Id);
+                    if (order != null)
+                    {
+                        var result = Mapper.Map<OrderViewModel>(order);
+                        result.StartPoint = RouteRepo.GetFirstOrDefault(o => o.PointId == order.StartPointId).Result.Name;
+                        result.EndPoint = RouteRepo.GetFirstOrDefault(o => o.PointId == order.EndPointId).Result.Name;
+                        result.CustomerName = customer.FullName;
+                        return result;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.ToString() + "\t" + "OrdersService");
+                    return null;
                 }
             }
 
@@ -122,7 +134,7 @@ namespace HappyBusProject.Services
                 }
                 catch (Exception e)
                 {
-                    LogWriter.ErrorWriterToFile(e.Message + " " + e.InnerException + " " + "POST Method, Orders Repository");
+                    _logger.LogError(e.ToString() + "\t" + "OrdersService");
                     return null;
                 }
             }
@@ -133,67 +145,84 @@ namespace HappyBusProject.Services
 
         public async Task<OrderViewModel> UpdateOrder(OrderInputModelPutMethod putModel)
         {
-            var user = await UserRepo.GetFirstOrDefault(u => u.FullName == putModel.FullName);
-
-            if (user != null)
+            try
             {
-                var startPoint = RouteRepo.GetFirstOrDefault(r => r.Name == putModel.StartPoint).Result.Name;
-                var endPoint = RouteRepo.GetFirstOrDefault(r => r.Name == putModel.EndPoint).Result.Name;
+                var user = await UserRepo.GetFirstOrDefault(u => u.FullName == putModel.FullName);
 
-                var check = OrderInputValidation.OrderValuesValidation(user.Id, startPoint, endPoint, (OrderInputModel)putModel, out string _);
-
-                if (check)
+                if (user != null)
                 {
-                    Order order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
-                    OrderMethods.PutMethodMyMapper(OrderRepo, RouteRepo, putModel, order, user, out bool isPointModified);
+                    var startPoint = RouteRepo.GetFirstOrDefault(r => r.Name == putModel.StartPoint).Result.Name;
+                    var endPoint = RouteRepo.GetFirstOrDefault(r => r.Name == putModel.EndPoint).Result.Name;
 
-                    if (isPointModified)
+                    var check = OrderInputValidation.OrderValuesValidation(user.Id, startPoint, endPoint, (OrderInputModel)putModel, out string _);
+
+                    if (check)
                     {
-                        var startPointKM = RouteRepo.GetLengthKM(order.StartPointId);
-                        var endPointKM = RouteRepo.GetLengthKM(order.EndPointId);
-                        order.TotalPrice = OrderMethods.CountTotalPrice(startPointKM, endPointKM, order.OrderSeatsNum);
-                        order.OrderDateTime = DateTime.Now;
+                        Order order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
+                        OrderMethods.PutMethodMyMapper(OrderRepo, RouteRepo, putModel, order, user, out bool isPointModified);
 
-
-                        var updateResult = await OrderRepo.Update(order);
-
-                        if (updateResult)
+                        if (isPointModified)
                         {
-                            var viewUpdatedResult = Mapper.Map<OrderViewModel>(order);
-                            viewUpdatedResult.CustomerName = user.FullName;
-                            viewUpdatedResult.StartPoint = RouteRepo.GetPointName(order.StartPointId);
-                            viewUpdatedResult.EndPoint = RouteRepo.GetPointName(order.EndPointId);
-                            return viewUpdatedResult;
+                            var startPointKM = RouteRepo.GetLengthKM(order.StartPointId);
+                            var endPointKM = RouteRepo.GetLengthKM(order.EndPointId);
+                            order.TotalPrice = OrderMethods.CountTotalPrice(startPointKM, endPointKM, order.OrderSeatsNum);
+                            order.OrderDateTime = DateTime.Now;
+
+
+                            var updateResult = await OrderRepo.Update(order);
+
+                            if (updateResult)
+                            {
+                                var viewUpdatedResult = Mapper.Map<OrderViewModel>(order);
+                                viewUpdatedResult.CustomerName = user.FullName;
+                                viewUpdatedResult.StartPoint = RouteRepo.GetPointName(order.StartPointId);
+                                viewUpdatedResult.EndPoint = RouteRepo.GetPointName(order.EndPointId);
+                                return viewUpdatedResult;
+                            }
                         }
+
+                        var viewResult = Mapper.Map<OrderViewModel>(order);
+                        viewResult.CustomerName = user.FullName;
+                        viewResult.StartPoint = RouteRepo.GetPointName(order.StartPointId);
+                        viewResult.EndPoint = RouteRepo.GetPointName(order.EndPointId);
+                        return viewResult;
                     }
-
-                    var viewResult = Mapper.Map<OrderViewModel>(order);
-                    viewResult.CustomerName = user.FullName;
-                    viewResult.StartPoint = RouteRepo.GetPointName(order.StartPointId);
-                    viewResult.EndPoint = RouteRepo.GetPointName(order.EndPointId);
-                    return viewResult;
                 }
-            }
 
-            return null;
+                return null;
+            }
+            catch (Exception e) 
+            {
+                _logger.LogError(e.ToString() + "\t" + "OrdersService");
+                return null;
+            }            
         }
 
         public async Task<bool> DeleteOrder(string FullName)
         {
-            var user = await UserRepo.GetFirstOrDefault(u => u.FullName == FullName);
-
-            if (user != null)
+            try
             {
-                Order order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
+                var user = await UserRepo.GetFirstOrDefault(u => u.FullName == FullName);
 
-                if (order != null)
+                if (user != null)
                 {
-                    var removeResult = await OrderRepo.Delete(order);
-                    if (removeResult) return true;
-                }
-            }
+                    Order order = OrderRepo.Get().Result.OrderByDescending(o => o.OrderDateTime).First(o => o.CustomerId == user.Id && o.IsActual);
 
-            return false;
+                    if (order != null)
+                    {
+                        var removeResult = await OrderRepo.Delete(order);
+                        if (removeResult) return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString() + "\t" + "OrdersService");
+                return false;
+            }
+            
         }
 
     }

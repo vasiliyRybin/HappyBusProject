@@ -24,88 +24,132 @@ namespace HappyBusProject.Services
 
         public async Task<UsersViewModel> GetByNameAsync(string name)
         {
-            User user = await Task.Run(() => _usRepository.GetFirstOrDefault(x => x.FullName == name));
-            if (user != null)
+            try
             {
-                var userView = _mapper.Map<UsersViewModel>(user);
-                return userView;
-            }
+                User user = await Task.Run(() => _usRepository.GetFirstOrDefault(x => x.FullName == name));
+                if (user != null)
+                {
+                    var userView = _mapper.Map<UsersViewModel>(user);
+                    return userView;
+                }
 
-            return null;
+                return null;
+
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString() + "\t" + "UsersService");
+                return null;
+            }
         }
 
         public async Task<UsersViewModel[]> GetAllUsers()
         {
-            var users = await _usRepository.Get();
-            if (users != null)
+            try
             {
-                var result = _mapper.Map<UsersViewModel[]>(users.ToList());
-                return result;
-            }
+                var users = await _usRepository.Get();
+                if (users != null)
+                {
+                    var result = _mapper.Map<UsersViewModel[]>(users.ToList());
+                    return result;
+                }
 
-            return null;
+                return null;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString() + "\t" + "UsersService");
+                return null;
+            }
         }
 
         public async Task<UsersViewModel> CreateAsync(UserInputModel InputUser)
         {
             const double UserDefaultRating = 5.0;
-            UsersInputValidation.AssignEmptyStringsToNullValues(InputUser);
-            var check = UsersInputValidation.UsersValuesValidation(InputUser, out _);
 
-            if (check)
+            try
             {
-                var user = _mapper.Map<User>(InputUser);
-                user.Id = Guid.NewGuid();
-                user.Rating = UserDefaultRating;
-                user.RegistrationDateTime = DateTime.Now;
+                UsersInputValidation.AssignEmptyStringsToNullValues(InputUser);
+                var check = UsersInputValidation.UsersValuesValidation(InputUser, out _);
 
-                var result = await _usRepository.Create(user);
-
-                if (result)
+                if (check)
                 {
-                    var output = _mapper.Map<UsersViewModel>(user);
-                    return output;
+                    var user = _mapper.Map<User>(InputUser);
+                    user.Id = Guid.NewGuid();
+                    user.Rating = UserDefaultRating;
+                    user.RegistrationDateTime = DateTime.Now;
+
+                    var result = await _usRepository.Create(user);
+
+                    if (result)
+                    {
+                        var output = _mapper.Map<UsersViewModel>(user);
+                        return output;
+                    }
                 }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString() + "\t" + "UsersService");
+                return null;
             }
 
-            return null;
         }
 
         public async Task<bool> UpdateUserInfo(UserInputModel InputUser)
         {
-            UsersInputValidation.AssignEmptyStringsToNullValues(InputUser);
-            var check = UsersInputValidation.UsersValuesValidation(InputUser, out _);
-
-            if (check)
+            try
             {
-                var user = await _usRepository.GetFirstOrDefault(u => u.FullName == InputUser.FullName);
+                UsersInputValidation.AssignEmptyStringsToNullValues(InputUser);
+                var check = UsersInputValidation.UsersValuesValidation(InputUser, out _);
 
-                if (user != null)
+                if (check)
                 {
-                    _mapper.Map(InputUser, user);
-                    var result = await _usRepository.Update(user);
-                    if (result) return true;
+                    var user = await _usRepository.GetFirstOrDefault(u => u.FullName == InputUser.FullName);
+
+                    if (user != null)
+                    {
+                        _mapper.Map(InputUser, user);
+                        var result = await _usRepository.Update(user);
+                        if (result) return true;
+                    }
                 }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString() + "\t" + "UsersService");
+                return false;
             }
 
-            return false;
         }
 
         public async Task<bool> DeleteUser(string Name)
         {
-            var userToRemove = await _usRepository.GetFirstOrDefault(u => u.FullName == Name);
-
-            if (userToRemove != null)
+            try
             {
-                var result = await _usRepository.Delete(userToRemove);
+                var userToRemove = await _usRepository.GetFirstOrDefault(u => u.FullName == Name);
 
-                if (result)
+                if (userToRemove != null)
                 {
-                    return true;
-                }
-            }
+                    var result = await _usRepository.Delete(userToRemove);
 
-            return false;
+                    if (result)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString() + "\t" + "UsersService");
+                return false;
+            }
         }
     }
 }
