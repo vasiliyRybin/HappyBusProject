@@ -21,7 +21,7 @@ namespace HappyBusProject.Controllers
             var result = await _service.GetAllAsync();
 
             if (result != null) return Ok(result);
-            return NoContent();
+            return NotFound();
         }
 
         [HttpGet("{DriverName}")]

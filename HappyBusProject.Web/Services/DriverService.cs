@@ -29,7 +29,7 @@ namespace HappyBusProject.Services
 
         public async Task<DriverViewModel> GetByNameAsync(string name)
         {
-            _log.LogInformation("Get driver by name: method execution started");
+            _log.LogWarning("Get driver by name: method execution started");
 
             try
             {
@@ -77,10 +77,6 @@ namespace HappyBusProject.Services
                     {
                         result[i] = new DriverViewModel { DriverName = preResult[i].DriverName, DriverAge = preResult[i].DriverAge, CarBrand = preResult[i].CarBrand, Rating = preResult[i].Rating };
                     }
-
-                    //var a = 10;
-                    //var b = 0;
-                    //var c = a / b;
 
                     return result;
                 }

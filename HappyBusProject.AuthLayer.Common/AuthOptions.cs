@@ -8,7 +8,7 @@ namespace HappyBusProject.AuthLayer.Common
     {
         public AuthOptions()
         {
-            Secret = Environment.GetEnvironmentVariable("MeineSekretischeKey", EnvironmentVariableTarget.User);
+            Secret = Environment.GetEnvironmentVariable("MeineSekretischeKey", EnvironmentVariableTarget.Machine);
         }
         public string Issuer { get; set; }
         public string Audience { get; set; }

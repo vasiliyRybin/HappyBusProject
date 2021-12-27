@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System;
 using System.Text.Json.Serialization;
 
 namespace HappyBusProject
@@ -66,7 +67,9 @@ namespace HappyBusProject
                 .CreateLogger();
 
             services.AddControllersWithViews();
-            services.AddDbContext<MyShuttleBusAppNewDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
+            services.AddDbContext<MyShuttleBusAppNewDBContext>
+                (options => options.UseSqlServer(Environment.GetEnvironmentVariable("DBConnectionString", EnvironmentVariableTarget.Machine))
+                .EnableSensitiveDataLogging());
 
             services.AddTransientScopedSingletonEntities(mapper, logger);
 
